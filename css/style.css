@@ -1,24 +1,66 @@
 
 body {
-    font-family: poppins;
+    font-family: 'Poppins';
     min-height: 100vh;
     flex-direction: column;
+    background-color: #EEEEEE;
 }
+.navbar-custom {
+    background-color: #C4D9FF;
+}
+.profile-img {
+    transition: all 0.3s ease;
+    border: 5px solid transparent;
+  }
+
+  .profile-img:hover {
+    border-color: #74E291; /* atau ganti dengan warna stroke lain */
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+  }
 
 .sidebar {
-    height: 100vh;
+    height: 100%;
     position: fixed;
     top: 56px;
-    /* height of navbar */
     left: 0;
     width: 250px;
-    background-color: #f8f9fa;
+    background-color: #92C7CF;
     padding-top: 1rem;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sidebar .nav-link {
+    color: black;
+    transition: background-color 0.1s;
+}
+
+.sidebar .nav-link.active {
+    background-color: #74E291;
+    color: #fff !important;
+    border-radius: 50rem;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #A1EEBD;
+    border-radius: 50rem;
 }
 
 .content {
-    margin-left: 250px;
+    margin-left: 180px;
     margin-top: 56px;
     padding: 1rem;
     flex: 1;
+}
+
+.card-nasabah {
+    background-color: #4D96FF;
+}
+
+.card-petugas {
+    background-color: #6BCB77;
+}
+
+.card-transaksi {
+    background-color: #FFD93D;
 }
