@@ -1,5 +1,5 @@
 <?php
-require_once '../koneksi.php';
+require '../koneksi.php';
 
 // Proses pencarian
 $keyword = isset($_GET['search']) ? $_GET['search'] : '';
@@ -18,7 +18,8 @@ $query = $koneksi->query("SELECT * FROM tb_admin $where");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bank Sampah</title>
+    <title>Bank Sampah Digital</title>
+    <link rel="icon" href="../favicon.ico" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">

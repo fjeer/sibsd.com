@@ -1,15 +1,31 @@
 <?php
 require '../koneksi.php';
 
-// Proses pencarian
-$where = "";
-$keyword = isset($_GET['search']) ? $_GET['search'] : '';
-if (!empty($keyword)) {
-    $where = "WHERE (nama LIKE '%$keyword%' OR email LIKE '%$keyword%' OR username LIKE '%$keyword%')";
+$id = $_GET['id'];
+$data = $koneksi->query("SELECT * FROM tb_admin WHERE id = '$id'");
+$row = $data->fetch_assoc();
+
+if (isset($_POST['submit'])) {
+    $nama = $_POST['nama'];
+    $email = $_POST['email'];
+    $no_telephone = $_POST['no_telephone'];
+    $role = $_POST['role'];
+    $status = $_POST['status'] ? 1 : 0;
+
+    $sql = "UPDATE tb_admin SET 
+            nama='$nama',
+            email='$email',
+            no_telephone = '$no_telephone',
+            role = '$role',
+            status = '$status',
+            updated_at = CURRENT_TIMESTAMP() 
+            WHERE id='$id'";
+
+    $koneksi->query($sql);
+
+    header("Location: data_admin.php");
 }
 
-// Query data
-$query = $koneksi->query("SELECT * FROM tb_sampah $where");
 ?>
 
 <!DOCTYPE html>
@@ -58,10 +74,10 @@ $query = $koneksi->query("SELECT * FROM tb_sampah $where");
                 <ul class="nav nav-pills flex-column mt-3">
                     <li class="nav-link"><a class="nav-link" href="../index.php">Dashboard</a></li>
                     <li class="nav-item mt-1 mb-1"><span class="text-muted text-uppercase fw-bold small">Data Master</span></li>
-                    <li class="nav-item mb-2"><a class="nav-link" href="../data_admin/data_admin.php">Data Admin</a></li>
+                    <li class="nav-item mb-2"><a class="nav-link active fw-bold" href="data_admin.php">Data Admin</a></li>
                     <li class="nav-item mb-2"><a class="nav-link" href="../data_petugas/data_petugas.php">Data Petugas</a></li>
                     <li class="nav-item mb-2"><a class="nav-link" href="../data_nasabah/data_nasabah.php">Data Nasabah</a></li>
-                    <li class="nav-item mb-2"><a class="nav-link active fw-bold" href="data_sampah.php">Data Sampah</a></li>
+                    <li class="nav-item mb-2"><a class="nav-link" href="../data_sampah/data_sampah.php">Data Sampah</a></li>
                     <li class="nav-item mt-2 mb-1"><span class="text-muted text-uppercase fw-bold small">Transaksi</span></li>
                     <li class="nav-item mb-2"><a class="nav-link" href="#">Transaksi Setor Sampah</a></li>
                     <li class="nav-item mb-2"><a class="nav-link" href="#">Riwayat Transaksi</a></li>
@@ -70,53 +86,47 @@ $query = $koneksi->query("SELECT * FROM tb_sampah $where");
                 </ul>
             </div>
         </div>
-
         <!-- Content -->
         <div class="content pt-5 ms-250 px-3">
-            <h2 class="mb-4">Data Sampah</h2>
+            <h2 class="mb-4">Edit Data Admin</h2>
 
-            <!-- Form Pencarian -->
-            <form class="d-flex mb-3" method="GET">
-                <input class="form-control me-2" type="search" name="search" placeholder="Cari sampah..." value="<?= htmlspecialchars($keyword) ?>">
-                <button class="btn btn-outline-primary" type="submit">Cari</button>
+            <form action="" method="POST">
+                <div class="mb-3">
+                    <label for="nama" class="form-label">Nama :</label>
+                    <input type="text" class="form-control" name="nama" id="nama" value="<?= htmlspecialchars($row['nama']) ?>" required>
+                </div>
+                <div class=" mb-3">
+                    <label for="email" class="form-label">Email :</label>
+                    <input type="email" class="form-control" name="email" id="email" value="<?= htmlspecialchars($row['email']) ?>" required>
+                </div>
+                <div class="mb-3">
+                    <label for="no_telephone" class="form-label">No Telephone :</label>
+                    <input type="number" class="form-control" name="no_telephone" id="no_telephone" value="<?= htmlspecialchars($row['no_telephone']) ?>" required>
+                </div>
+                <div class="mb-3">
+                    <label for="role" class="form-label">Role :</label>
+                    <select class="form-select" name="role" required>
+                        <option value="" disabled <?= $row['role'] == '' ? 'selected' : '' ?>>Pilih role</option>
+                        <option value="superadmin" <?= $row['role'] == 'superadmin' ? 'selected' : '' ?>>Superadmin</option>
+                        <option value="admin" <?= $row['role'] == 'admin' ? 'selected' : '' ?>>Admin</option>
+                    </select>
+                </div>
+                <label class="form-label d-block">Status :</label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="status" id="statusAktif" value="true"
+                        <?= $row['status'] ? 'checked' : '' ?>>
+                    <label class="form-check-label" for="statusAktif">Aktif</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="status" id="statusNonAktif" value="false"
+                        <?= !$row['status'] ? 'checked' : '' ?>>
+                    <label class="form-check-label" for="statusNonAktif">Non Aktif</label>
+                </div>
+
+                <div class="mt-3">
+                    <button type="submit" name="submit" class="btn btn-success btn-lg">Edit Data</button>
+                </div>
             </form>
-
-            <!-- Tombol Tambah -->
-            <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#modalTambah">+ Tambah Sampah</button>
-
-
-            <table class="table table-striped-columns table-hover">
-                <thead class="table-info">
-                    <tr>
-                        <th>No</th>
-                        <th>Jenis Sampah</th>
-                        <th>Harga per Kg</th>
-                        <th>Deskripsi</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $no = 1;
-                    $query = $koneksi->query("SELECT * FROM tb_sampah");
-                    while ($row = $query->fetch_assoc()):
-                    ?>
-                        <tr>
-                            <td><?= $no++ ?></td>
-                            <td><?= htmlspecialchars($row['jenis_sampah']) ?></td>
-                            <td><?= htmlspecialchars($row['harga_per_kg']) ?></td>
-                            <td><?= htmlspecialchars($row['deskripsi']) ?></td>
-                            <td>
-                                <?php if ($row['status'] == true): ?>
-                                    <span class="badge bg-success">Aktif</span>
-                                <?php else: ?>
-                                    <span class="badge bg-secondary">Nonaktif</span>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
         </div>
 
     </div>
