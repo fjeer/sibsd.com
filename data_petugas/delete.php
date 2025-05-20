@@ -12,4 +12,4 @@ if ($koneksi->query($sql) === TRUE) {
     $_SESSION['tipe'] = 'danger';
 }
 
-header("Location: data_admin.php");
+header("Location: data_petugas.php");

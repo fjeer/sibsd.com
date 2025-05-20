@@ -2,25 +2,40 @@
 session_start();
 require '../koneksi.php';
 
-$alert = "";
+$id = $_GET['id'];
+$data = $koneksi->query("SELECT * FROM tb_nasabah WHERE id = '$id'");
+$row = $data->fetch_assoc();
+
 if (isset($_POST['submit'])) {
+    $nin = $_POST['nin'];
     $nama = $_POST['nama'];
+    $jenis_kelamin = $_POST['jenis_kelamin'];
+    $alamat = $_POST['alamat'];
     $email = $_POST['email'];
     $no_telephone = $_POST['no_telephone'];
-    $role = $_POST['role'];
+    $tanggal_daftar = $_POST['tanggal_daftar'];
+    $status = $_POST['status'] ? 1 : 0;
 
-    $sql = "INSERT INTO tb_admin (nama, email, no_telephone, role) 
-        VALUES ('$nama', '$email', '$no_telephone', '$role')";
+    $sql = "UPDATE tb_nasabah SET 
+            nama='$nama',
+            jenis_kelamin='$jenis_kelamin',
+            email='$email',
+            no_telephone = '$no_telephone',
+            status = '$status',
+            updated_at = CURRENT_TIMESTAMP() 
+            WHERE id='$id'";
+
     if ($koneksi->query($sql) === TRUE) {
-        $_SESSION['pesan'] = 'Data admin berhasil ditambahkan!';
+        $_SESSION['pesan'] = 'Data nasabah berhasil diperbarui!';
         $_SESSION['tipe'] = 'success';
     } else {
-        $_SESSION['pesan'] = 'Data admin gagal ditambahkan!';
+        $_SESSION['pesan'] = 'Data nasabah gagal diperbarui!';
         $_SESSION['tipe'] = 'danger';
     }
 
-    header("Location: data_admin.php");
+    header("Location: data_nasabah.php");
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -83,31 +98,63 @@ if (isset($_POST['submit'])) {
         </div>
         <!-- Content -->
         <div class="content pt-5 ms-250 px-3">
-            <h2 class="mb-4">Tambah Data Admin</h2>
+            <h2 class="mb-4">Edit Data Nasabah</h2>
 
             <form action="" method="POST">
                 <div class="mb-3">
-                    <label for="nama" class="form-label">Nama :</label>
-                    <input type="text" class="form-control" name="nama" id="nama" placeholder="contoh : Budie Arie" required>
+                    <label for="nin" class="form-label">Nin :</label>
+                    <input type="text" class="form-control" name="nin" id="nin" value="<?= htmlspecialchars($row['nin']) ?>" readonly>
                 </div>
                 <div class="mb-3">
+                    <label for="nama" class="form-label">Nama :</label>
+                    <input type="text" class="form-control" name="nama" id="nama" value="<?= htmlspecialchars($row['nama']) ?>" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label d-block">Jenis Kelamin :</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="jenis_kelamin" id="jenis_kelaminL" value="l" <?= $row['jenis_kelamin'] == 'l' ? 'checked' : '' ?>>
+                        <label class="form-check-label" for="jenis_kelaminL">Laki-laki</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="jenis_kelamin" id="jenis_kelaminP" value="p" <?= $row['jenis_kelamin'] == 'p' ? 'checked' : '' ?>>
+                        <label class="form-check-label" for="jenis_kelaminP">Perempuan</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label d-block" for="alamat">Alamat :</label>
+                    <div class="form-floating">
+                        <textarea class="form-control" name="alamat" id="alamat" required><?= htmlspecialchars($row['alamat']) ?></textarea>
+                        <label for="alamat">isi alamat disini</label>
+                    </div>
+                </div>
+                <div class=" mb-3">
                     <label for="email" class="form-label">Email :</label>
-                    <input type="email" class="form-control" name="email" id="email" placeholder="contoh : Budiegaming@gamil.kom" required>
+                    <input type="email" class="form-control" name="email" id="email" value="<?= htmlspecialchars($row['email']) ?>" required>
                 </div>
                 <div class="mb-3">
                     <label for="no_telephone" class="form-label">No Telephone :</label>
-                    <input type="number" class="form-control" name="no_telephone" id="no_telephone" placeholder="contoh : 08262xxxxxxx" required>
+                    <input type="number" class="form-control" name="no_telephone" id="no_telephone" value="<?= htmlspecialchars($row['no_telephone']) ?>" required>
                 </div>
                 <div class="mb-3">
-                    <label for="role" class="form-label">Role :</label>
-                    <select class="form-select" name="role" required>
-                        <option selected>Pilih role</option>
-                        <option value="superadmin">Superadmin</option>
-                        <option value="admin">Admin</option>
-                    </select>
+                    <label for="tanggal_daftar" class="form-label">Tanggal daftar :</label>
+                    <input type="date" class="form-control" name="tanggal_daftar" id="tanggal_daftar" value="<?= htmlspecialchars($row['tanggal_daftar']) ?>" readonly>
                 </div>
-                <button type="submit" name="submit" class="btn btn-success btn-lg">Simpan</button>
-                <a href="data_admin.php" class="btn btn-danger btn-lg">Kembali</a>
+                <label class="form-label d-block">Status :</label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="status" id="statusAktif" value="true"
+                        <?= $row['status'] ? 'checked' : '' ?>>
+                    <label class="form-check-label" for="statusAktif">Aktif</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="status" id="statusNonAktif" value="false"
+                        <?= !$row['status'] ? 'checked' : '' ?>>
+                    <label class="form-check-label" for="statusNonAktif">Non Aktif</label>
+                </div>
+
+                <div class="mt-3">
+                    <button type="submit" name="submit" class="btn btn-success btn-lg">Edit Data</button>
+                    <a href="data_nasabah.php" class="btn btn-danger btn-lg">Kembali</a>
+                </div>
             </form>
         </div>
 
