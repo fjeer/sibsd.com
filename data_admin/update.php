@@ -1,4 +1,5 @@
 <?php
+session_start();
 require '../koneksi.php';
 
 $id = $_GET['id'];
@@ -21,7 +22,13 @@ if (isset($_POST['submit'])) {
             updated_at = CURRENT_TIMESTAMP() 
             WHERE id='$id'";
 
-    $koneksi->query($sql);
+    if ($koneksi->query($sql) === TRUE) {
+        $_SESSION['pesan'] = 'Data admin berhasil diperbarui!';
+        $_SESSION['tipe'] = 'success';
+    } else {
+        $_SESSION['pesan'] = 'Data admin gagal diperbarui!';
+        $_SESSION['tipe'] = 'danger';
+    }
 
     header("Location: data_admin.php");
 }
@@ -125,6 +132,7 @@ if (isset($_POST['submit'])) {
 
                 <div class="mt-3">
                     <button type="submit" name="submit" class="btn btn-success btn-lg">Edit Data</button>
+                    <a href="data_admin.php" class="btn btn-danger btn-lg">Kembali</a>
                 </div>
             </form>
         </div>

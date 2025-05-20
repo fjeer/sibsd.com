@@ -1,23 +1,38 @@
 <?php
+session_start();
 require '../koneksi.php';
 
-$alert = "";
+$id = $_GET['id'];
+$data = $koneksi->query("SELECT * FROM tb_admin WHERE id = '$id'");
+$row = $data->fetch_assoc();
+
 if (isset($_POST['submit'])) {
     $nama = $_POST['nama'];
     $email = $_POST['email'];
     $no_telephone = $_POST['no_telephone'];
     $role = $_POST['role'];
+    $status = $_POST['status'] ? 1 : 0;
 
-    $sql = "INSERT INTO tb_admin (nama, email, no_telephone, role) 
-        VALUES ('$nama', '$email', '$no_telephone', '$role')";
+    $sql = "UPDATE tb_admin SET 
+            nama='$nama',
+            email='$email',
+            no_telephone = '$no_telephone',
+            role = '$role',
+            status = '$status',
+            updated_at = CURRENT_TIMESTAMP() 
+            WHERE id='$id'";
+
     if ($koneksi->query($sql) === TRUE) {
-        $alert = "1";
+        $_SESSION['pesan'] = 'Data petugas berhasil diperbarui!';
+        $_SESSION['tipe'] = 'success';
     } else {
-        $alert = "0";
+        $_SESSION['pesan'] = 'Data petugas gagal diperbarui!';
+        $_SESSION['tipe'] = 'danger';
     }
 
-    header("Location: data_admin.php");
+    header("Location: data_petugas.php");
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -66,8 +81,8 @@ if (isset($_POST['submit'])) {
                 <ul class="nav nav-pills flex-column mt-3">
                     <li class="nav-link"><a class="nav-link" href="../index.php">Dashboard</a></li>
                     <li class="nav-item mt-1 mb-1"><span class="text-muted text-uppercase fw-bold small">Data Master</span></li>
-                    <li class="nav-item mb-2"><a class="nav-link active fw-bold" href="data_admin.php">Data Admin</a></li>
-                    <li class="nav-item mb-2"><a class="nav-link" href="../data_petugas/data_petugas.php">Data Petugas</a></li>
+                    <li class="nav-item mb-2"><a class="nav-link" href="../data_admin/data_admin.php">Data Admin</a></li>
+                    <li class="nav-item mb-2"><a class="nav-link active fw-bold" href="data_petugas.php">Data Petugas</a></li>
                     <li class="nav-item mb-2"><a class="nav-link" href="../data_nasabah/data_nasabah.php">Data Nasabah</a></li>
                     <li class="nav-item mb-2"><a class="nav-link" href="../data_sampah/data_sampah.php">Data Sampah</a></li>
                     <li class="nav-item mt-2 mb-1"><span class="text-muted text-uppercase fw-bold small">Transaksi</span></li>
@@ -80,31 +95,41 @@ if (isset($_POST['submit'])) {
         </div>
         <!-- Content -->
         <div class="content pt-5 ms-250 px-3">
-            <h2 class="mb-4">Tambah Data Admin</h2>
+            <h2 class="mb-4">Edit Data Petugas</h2>
 
             <form action="" method="POST">
                 <div class="mb-3">
                     <label for="nama" class="form-label">Nama :</label>
-                    <input type="text" class="form-control" name="nama" id="nama" placeholder="contoh : Budie Arie" required>
+                    <input type="text" class="form-control" name="nama" id="nama" value="<?= htmlspecialchars($row['nama']) ?>" required>
                 </div>
-                <div class="mb-3">
+                <div class=" mb-3">
                     <label for="email" class="form-label">Email :</label>
-                    <input type="email" class="form-control" name="email" id="email" placeholder="contoh : Budiegaming@gamil.kom" required>
+                    <input type="email" class="form-control" name="email" id="email" value="<?= htmlspecialchars($row['email']) ?>" required>
                 </div>
                 <div class="mb-3">
                     <label for="no_telephone" class="form-label">No Telephone :</label>
-                    <input type="number" class="form-control" name="no_telephone" id="no_telephone" placeholder="contoh : 08262xxxxxxx" required>
+                    <input type="number" class="form-control" name="no_telephone" id="no_telephone" value="<?= htmlspecialchars($row['no_telephone']) ?>" required>
                 </div>
                 <div class="mb-3">
                     <label for="role" class="form-label">Role :</label>
-                    <select class="form-select" name="role" required>
-                        <option selected>Pilih role</option>
-                        <option value="superadmin">Superadmin</option>
-                        <option value="admin">Admin</option>
-                    </select>
+                    <input type="text" class="form-control" name="role" id="role" value="<?= htmlspecialchars($row['role']) ?>" required readonly>
                 </div>
-                <button type="submit" name="submit" class="btn btn-success btn-lg">Simpan</button>
-                <a href="data_admin.php" class="btn btn-danger btn-lg">Kembali</a>
+                <label class="form-label d-block">Status :</label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="status" id="statusAktif" value="true"
+                        <?= $row['status'] ? 'checked' : '' ?>>
+                    <label class="form-check-label" for="statusAktif">Aktif</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="status" id="statusNonAktif" value="false"
+                        <?= !$row['status'] ? 'checked' : '' ?>>
+                    <label class="form-check-label" for="statusNonAktif">Non Aktif</label>
+                </div>
+
+                <div class="mt-3">
+                    <button type="submit" name="submit" class="btn btn-success btn-lg">Edit Data</button>
+                    <a href="data_petugas.php" class="btn btn-danger btn-lg">Kembali</a>
+                </div>
             </form>
         </div>
 

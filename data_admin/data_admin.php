@@ -79,6 +79,21 @@ if ($result->num_rows > 0) {
         </div>
         <!-- Content -->
         <div class="content pt-5 ms-250 px-3">
+            <!-- Alert Pesan -->
+            <?php
+            session_start();
+            if (isset($_SESSION['pesan'])):
+            ?>
+                <div class="alert alert-<?= $_SESSION['tipe'] ?> alert-dismissible fade show mb-3" role="alert">
+                    <strong><?= $_SESSION['pesan'] ?></strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php
+                unset($_SESSION['pesan']);
+                unset($_SESSION['tipe']);
+            endif;
+            ?>
+
             <h2 class="mb-4">Data Admin</h2>
 
             <!-- Form Pencarian -->

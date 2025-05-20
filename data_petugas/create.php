@@ -1,7 +1,7 @@
 <?php
+session_start();
 require '../koneksi.php';
 
-$alert = "";
 if (isset($_POST['submit'])) {
     $nama = $_POST['nama'];
     $email = $_POST['email'];
@@ -11,12 +11,14 @@ if (isset($_POST['submit'])) {
     $sql = "INSERT INTO tb_admin (nama, email, no_telephone, role) 
         VALUES ('$nama', '$email', '$no_telephone', '$role')";
     if ($koneksi->query($sql) === TRUE) {
-        $alert = "1";
+        $_SESSION['pesan'] = 'Data petugas berhasil ditambahkan!';
+        $_SESSION['tipe'] = 'success';
     } else {
-        $alert = "0";
+        $_SESSION['pesan'] = 'Data petugas gagal ditambahkan!';
+        $_SESSION['tipe'] = 'danger';
     }
 
-    header("Location: data_admin.php");
+    header("Location: data_petugas.php");
 }
 ?>
 
@@ -66,8 +68,8 @@ if (isset($_POST['submit'])) {
                 <ul class="nav nav-pills flex-column mt-3">
                     <li class="nav-link"><a class="nav-link" href="../index.php">Dashboard</a></li>
                     <li class="nav-item mt-1 mb-1"><span class="text-muted text-uppercase fw-bold small">Data Master</span></li>
-                    <li class="nav-item mb-2"><a class="nav-link active fw-bold" href="data_admin.php">Data Admin</a></li>
-                    <li class="nav-item mb-2"><a class="nav-link" href="../data_petugas/data_petugas.php">Data Petugas</a></li>
+                    <li class="nav-item mb-2"><a class="nav-link" href="../data_admin/data_admin.php">Data Admin</a></li>
+                    <li class="nav-item mb-2"><a class="nav-link active fw-bold" href="data_petugas.php">Data Petugas</a></li>
                     <li class="nav-item mb-2"><a class="nav-link" href="../data_nasabah/data_nasabah.php">Data Nasabah</a></li>
                     <li class="nav-item mb-2"><a class="nav-link" href="../data_sampah/data_sampah.php">Data Sampah</a></li>
                     <li class="nav-item mt-2 mb-1"><span class="text-muted text-uppercase fw-bold small">Transaksi</span></li>
@@ -80,7 +82,7 @@ if (isset($_POST['submit'])) {
         </div>
         <!-- Content -->
         <div class="content pt-5 ms-250 px-3">
-            <h2 class="mb-4">Tambah Data Admin</h2>
+            <h2 class="mb-4">Tambah Data Petugas</h2>
 
             <form action="" method="POST">
                 <div class="mb-3">
@@ -97,14 +99,10 @@ if (isset($_POST['submit'])) {
                 </div>
                 <div class="mb-3">
                     <label for="role" class="form-label">Role :</label>
-                    <select class="form-select" name="role" required>
-                        <option selected>Pilih role</option>
-                        <option value="superadmin">Superadmin</option>
-                        <option value="admin">Admin</option>
-                    </select>
+                    <input type="text" class="form-control" name="role" id="role" value="petugas" readonly>
                 </div>
                 <button type="submit" name="submit" class="btn btn-success btn-lg">Simpan</button>
-                <a href="data_admin.php" class="btn btn-danger btn-lg">Kembali</a>
+                <a href="data_petugas.php" class="btn btn-danger btn-lg">Kembali</a>
             </form>
         </div>
 
