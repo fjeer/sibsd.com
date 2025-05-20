@@ -104,7 +104,7 @@ if ($result->num_rows > 0) {
             <a href="create.php" class="btn btn-success mb-3">+ Tambah Petugas</a>
 
 
-            <table class="table table-striped table-hover">
+            <table class="table table-striped-columns table-hover">
                 <thead class="table-info">
                     <tr>
                         <th>No</th>

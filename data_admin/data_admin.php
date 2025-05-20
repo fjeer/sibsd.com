@@ -106,7 +106,7 @@ if ($result->num_rows > 0) {
             <a class="btn btn-success mb-3" href="create.php">+ Tambah Admin</a>
 
 
-            <table class="table table-striped table-hover">
+            <table class="table table-striped-columns table-hover">
                 <thead class="table-info">
                     <tr>
                         <th>No</th>

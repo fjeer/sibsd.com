@@ -1,16 +1,24 @@
 <?php
-session_start();
 require '../koneksi.php';
 
 // Proses pencarian
 $where = "";
 $keyword = isset($_GET['search']) ? $_GET['search'] : '';
 if (!empty($keyword)) {
-    $where = "WHERE (nama LIKE '%$keyword%' OR email LIKE '%$keyword%' OR username LIKE '%$keyword%')";
+    $where = "WHERE (nin LIKE '%$keyword%' 
+    OR jenis_sampah LIKE '%$keyword%' 
+    OR harga_per_kg LIKE '%$keyword%'
+    OR deskripsi LIKE '%$keyword%')";
 }
 
 // Query data
-$query = $koneksi->query("SELECT * FROM tb_sampah $where");
+$result = $koneksi->query("SELECT * FROM tb_sampah $where");
+$data = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -74,6 +82,21 @@ $query = $koneksi->query("SELECT * FROM tb_sampah $where");
 
         <!-- Content -->
         <div class="content pt-5 ms-250 px-3">
+            <!-- Alert Pesan -->
+            <?php
+            session_start();
+            if (isset($_SESSION['pesan'])):
+            ?>
+                <div class="alert alert-<?= $_SESSION['tipe'] ?> alert-dismissible fade show mb-3" role="alert">
+                    <strong><?= $_SESSION['pesan'] ?></strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php
+                unset($_SESSION['pesan']);
+                unset($_SESSION['tipe']);
+            endif;
+            ?>
+
             <h2 class="mb-4">Data Sampah</h2>
 
             <!-- Form Pencarian -->
@@ -83,8 +106,7 @@ $query = $koneksi->query("SELECT * FROM tb_sampah $where");
             </form>
 
             <!-- Tombol Tambah -->
-            <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#modalTambah">+ Tambah Sampah</button>
-
+            <a href="create.php" class="btn btn-success mb-3">+ Tambah Sampah</a>
 
             <table class="table table-striped-columns table-hover">
                 <thead class="table-info">
@@ -92,21 +114,18 @@ $query = $koneksi->query("SELECT * FROM tb_sampah $where");
                         <th>No</th>
                         <th>Jenis Sampah</th>
                         <th>Harga per Kg</th>
-                        <th>Deskripsi</th>
                         <th>Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="table-secondary">
                     <?php
-                    $no = 1;
-                    $query = $koneksi->query("SELECT * FROM tb_sampah");
-                    while ($row = $query->fetch_assoc()):
+                    foreach ($data as $index => $row):
                     ?>
                         <tr>
-                            <td><?= $no++ ?></td>
+                            <td><?= $index + 1 ?></td>
                             <td><?= htmlspecialchars($row['jenis_sampah']) ?></td>
                             <td><?= htmlspecialchars($row['harga_per_kg']) ?></td>
-                            <td><?= htmlspecialchars($row['deskripsi']) ?></td>
                             <td>
                                 <?php if ($row['status'] == true): ?>
                                     <span class="badge bg-success">Aktif</span>
@@ -114,12 +133,51 @@ $query = $koneksi->query("SELECT * FROM tb_sampah $where");
                                     <span class="badge bg-secondary">Nonaktif</span>
                                 <?php endif; ?>
                             </td>
+                            <td>
+                                <!-- tombol lihat detail -->
+                                <button
+                                    class="btn btn-info btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalDetail<?= $row['id'] ?>">
+                                    Detail
+                                </button>
+                                <!-- tombol edit -->
+                                <a href="update.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
+                                <!-- tombol hapus -->
+                                <a href="delete.php?id=<?= $row['id'] ?>" onclick="return confirm('Yakin ingin menghapus data ini?')" class="btn btn-sm btn-danger">Hapus</a>
+                            </td>
                         </tr>
-                    <?php endwhile; ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
-        </div>
 
+            <!-- Modal Detail -->
+            <?php foreach ($data as $row): ?>
+                <div class="modal fade" id="modalDetail<?= $row['id'] ?>" tabindex="-1" aria-labelledby="modalDetailLabel<?= $row['id'] ?>" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalDetailLabel<?= $row['id'] ?>">Detail Nasabah</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p><strong>Jenis Sampah:</strong> <?= htmlspecialchars($row['jenis_sampah']) ?></p>
+                                <p><strong>Harga per Kg:</strong> <?= htmlspecialchars($row['harga_per_kg']) ?></p>
+                                <p><strong>Deskripsi:</strong> <?= htmlspecialchars($row['deskripsi']) ?></p>
+                                <p><strong>Status:</strong>
+                                    <?= $row['status'] ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-secondary">Nonaktif</span>' ?>
+                                </p>
+                                <p><strong>Tanggal Input:</strong> <?= htmlspecialchars($row['created_at']) ?></p>
+                                <p><strong>Tanggal Update:</strong> <?= htmlspecialchars($row['updated_at']) ?></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
     </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

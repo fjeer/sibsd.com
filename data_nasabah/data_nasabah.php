@@ -108,7 +108,7 @@ if ($result->num_rows > 0) {
             <!-- Tombol Tambah -->
             <a href="create.php" class="btn btn-success mb-3">+ Tambah Nasabah</a>
 
-            <table class="table table-striped table-hover">
+            <table class="table table-striped-columns table-hover">
                 <thead class="table-info">
                     <tr>
                         <th>No</th>
