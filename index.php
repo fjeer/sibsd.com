@@ -109,27 +109,10 @@ require 'dashboard.php';
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        const ctx = document.getElementById('sampahChart').getContext('2d');
-        const chart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: <?= json_encode($bulan_labels) ?>,
-                datasets: [{
-                    label: 'Setoran (kg)',
-                    data: <?= json_encode($jumlah_kg) ?>,
-                    backgroundColor: '#0d6efd'
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
+        window.bulan_labels = <?= json_encode($bulan_labels) ?>;
+        window.jumlah_kg = <?= json_encode($jumlah_kg) ?>;
     </script>
+    <script src="js/script.js"></script>
 </body>
 
 </html>
