@@ -159,12 +159,12 @@ if ($result->num_rows > 0) {
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <p><strong>Nin:</strong> <?= htmlspecialchars($row['nin']) ?></p>
+                                <p><strong>Nomor Induk Nasabah:</strong> <?= htmlspecialchars($row['nin']) ?></p>
                                 <p><strong>Nama:</strong> <?= htmlspecialchars($row['nama_nasabah']) ?></p>
                                 <p><strong>Jenis Sampah:</strong> <?= htmlspecialchars($row['jenis_sampah']) ?></p>
-                                <p><strong>Berat Sampah:</strong> <?= htmlspecialchars($row['berat_sampah']) ?></p>
+                                <p><strong>Berat Sampah:</strong> <?= htmlspecialchars($row['berat_sampah']) ?> Kg</p>
                                 <p><strong>Poin:</strong> <?= htmlspecialchars($row['total_poin']) ?></p>
-                                <p><strong>Saldo Nasabah:</strong> <?= htmlspecialchars($row['saldo_poin']) ?></p>
+                                <p><strong>Saldo Nasabah:</strong> Rp. <?= htmlspecialchars($row['saldo_poin']) ?></p>
                                 <p><strong>Tanggal Transaksi:</strong> <?= htmlspecialchars($row['tanggal_transaksi']) ?></p>
                                 <p><strong>Status:</strong>
                                     <?= $row['status'] ? '<span class="badge bg-success">Berhasil</span>' : '<span class="badge bg-secondary">Gagal</span>' ?>
