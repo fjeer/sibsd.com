@@ -80,12 +80,12 @@ if (isset($_POST['submit'])) {
                     <li class="nav-link"><a class="nav-link" href="../index.php">Dashboard</a></li>
                     <li class="nav-item mt-1 mb-1"><span class="text-muted text-uppercase fw-bold small">Data Master</span></li>
                     <li class="nav-item mb-2"><a class="nav-link" href="../data_admin/data_admin.php">Data Admin</a></li>
-                    <li class="nav-item mb-2"><a class="nav-link active fw-bold" href="data_petugas.php">Data Petugas</a></li>
+                    <li class="nav-item mb-2"><a class="nav-link" href="../data_petugas.php">Data Petugas</a></li>
                     <li class="nav-item mb-2"><a class="nav-link" href="../data_nasabah/data_nasabah.php">Data Nasabah</a></li>
-                    <li class="nav-item mb-2"><a class="nav-link" href="../data_sampah/data_sampah.php">Data Sampah</a></li>
+                    <li class="nav-item mb-2"><a class="nav-link active fw-bold" href="data_sampah/data_sampah.php">Data Sampah</a></li>
                     <li class="nav-item mt-2 mb-1"><span class="text-muted text-uppercase fw-bold small">Transaksi</span></li>
-                    <li class="nav-item mb-2"><a class="nav-link" href="#">Transaksi Setor Sampah</a></li>
-                    <li class="nav-item mb-2"><a class="nav-link" href="#">Riwayat Transaksi</a></li>
+                    <li class="nav-item mb-2"><a class="nav-link" href="../setor_sampah/setor_sampah.php">Transaksi Setor Sampah</a></li>
+                    <li class="nav-item mb-2"><a class="nav-link" href="../setor_sampah/riwayat_setor.php">Riwayat Transaksi</a></li>
                     <li class="nav-item mt-2 mb-1"><span class="text-muted text-uppercase fw-bold small">Laporan</span></li>
                     <li class="nav-item mb-2"><a class="nav-link" href="#">Laporan</a></li>
                 </ul>

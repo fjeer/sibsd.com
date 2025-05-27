@@ -74,8 +74,8 @@ if (isset($_POST['submit'])) {
                     <li class="nav-item mb-2"><a class="nav-link" href="../data_nasabah/data_nasabah.php">Data Nasabah</a></li>
                     <li class="nav-item mb-2"><a class="nav-link" href="../data_sampah/data_sampah.php">Data Sampah</a></li>
                     <li class="nav-item mt-2 mb-1"><span class="text-muted text-uppercase fw-bold small">Transaksi</span></li>
-                    <li class="nav-item mb-2"><a class="nav-link" href="#">Transaksi Setor Sampah</a></li>
-                    <li class="nav-item mb-2"><a class="nav-link" href="#">Riwayat Transaksi</a></li>
+                    <li class="nav-item mb-2"><a class="nav-link" href="../setor_sampah/setor_sampah.php">Transaksi Setor Sampah</a></li>
+                    <li class="nav-item mb-2"><a class="nav-link" href="../setor_sampah/riwayat_setor.php">Riwayat Transaksi</a></li>
                     <li class="nav-item mt-2 mb-1"><span class="text-muted text-uppercase fw-bold small">Laporan</span></li>
                     <li class="nav-item mb-2"><a class="nav-link" href="#">Laporan</a></li>
                 </ul>
@@ -101,7 +101,7 @@ if (isset($_POST['submit'])) {
                 <div class="mb-3">
                     <label for="role" class="form-label">Role :</label>
                     <select class="form-select" name="role" required>
-                        <option selected>Pilih role</option>
+                        <option selected>-- Pilih Role --</option>
                         <option value="superadmin">Superadmin</option>
                         <option value="admin">Admin</option>
                     </select>

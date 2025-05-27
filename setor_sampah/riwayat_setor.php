@@ -1,22 +1,29 @@
 <?php
 require '../koneksi.php';
 
-// Proses pencarian
-$keyword = isset($_GET['search']) ? $_GET['search'] : '';
-$where = "WHERE role IN ('admin', 'superadmin')";
-if (!empty($keyword)) {
-    $where .= " AND (nama LIKE '%$keyword%' OR email LIKE '%$keyword%' OR no_telephone LIKE '%$keyword%')";
-}
-
 // Query data
-$result = $koneksi->query("SELECT * FROM tb_admin $where");
+$query = "SELECT 
+    st.id,
+    n.nin,
+    n.nama as nama_nasabah,
+    s.jenis_sampah,
+    st.berat_sampah,
+    st.total_poin,
+    n.saldo_poin,
+    st.tanggal_transaksi,
+    st.status,
+    st.created_at,
+    st.updated_at
+FROM tb_setor_sampah st
+JOIN tb_nasabah n ON st.id_nasabah = n.id
+JOIN tb_sampah s ON st.id_sampah = s.id";
+$result = $koneksi->query($query);
 $data = [];
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $data[] = $row;
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -58,24 +65,26 @@ if ($result->num_rows > 0) {
             </div>
         </nav>
 
+
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="container">
                 <ul class="nav nav-pills flex-column mt-3">
                     <li class="nav-link"><a class="nav-link" href="../index.php">Dashboard</a></li>
                     <li class="nav-item mt-1 mb-1"><span class="text-muted text-uppercase fw-bold small">Data Master</span></li>
-                    <li class="nav-item mb-2"><a class="nav-link active fw-bold" href="data_admin.php">Data Admin</a></li>
+                    <li class="nav-item mb-2"><a class="nav-link" href="../data_admin/data_admin.php">Data Admin</a></li>
                     <li class="nav-item mb-2"><a class="nav-link" href="../data_petugas/data_petugas.php">Data Petugas</a></li>
                     <li class="nav-item mb-2"><a class="nav-link" href="../data_nasabah/data_nasabah.php">Data Nasabah</a></li>
                     <li class="nav-item mb-2"><a class="nav-link" href="../data_sampah/data_sampah.php">Data Sampah</a></li>
                     <li class="nav-item mt-2 mb-1"><span class="text-muted text-uppercase fw-bold small">Transaksi</span></li>
-                    <li class="nav-item mb-2"><a class="nav-link" href="../setor_sampah/setor_sampah.php">Transaksi Setor Sampah</a></li>
-                    <li class="nav-item mb-2"><a class="nav-link" href="../setor_sampah/riwayat_setor.php">Riwayat Transaksi</a></li>
+                    <li class="nav-item mb-2"><a class="nav-link" href="setor_sampah.php">Transaksi Setor Sampah</a></li>
+                    <li class="nav-item mb-2"><a class="nav-link active fw-bold" href="riwayat_setor.php">Riwayat Transaksi</a></li>
                     <li class="nav-item mt-2 mb-1"><span class="text-muted text-uppercase fw-bold small">Laporan</span></li>
                     <li class="nav-item mb-2"><a class="nav-link" href="#">Laporan</a></li>
                 </ul>
             </div>
         </div>
+
         <!-- Content -->
         <div class="content pt-5 ms-250 px-3">
             <!-- Alert Pesan -->
@@ -93,26 +102,16 @@ if ($result->num_rows > 0) {
             endif;
             ?>
 
-            <h2 class="mb-4">Data Admin</h2>
-
-            <!-- Form Pencarian -->
-            <form class="d-flex mb-3" action="" method="GET">
-                <input class="form-control me-2" type="search" name="search" placeholder="Cari admin..." value="<?= htmlspecialchars($keyword) ?>">
-                <button class="btn btn-outline-primary" type="submit">Cari</button>
-            </form>
-
-            <!-- Tombol Tambah -->
-            <a class="btn btn-success mb-3" href="create.php">+ Tambah Admin</a>
-
+            <h2 class="mb-4">Riwayat Setor Sampah</h2>
 
             <table class="table table-striped-columns table-hover">
                 <thead class="table-info">
                     <tr>
                         <th>No</th>
                         <th>Nama</th>
-                        <th>Email</th>
-                        <th>No Telephone</th>
-                        <th>Role</th>
+                        <th>Jenis Sampah</th>
+                        <th>Berat Sampah</th>
+                        <th>Tanggal Transaksi</th>
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
@@ -123,15 +122,15 @@ if ($result->num_rows > 0) {
                     ?>
                         <tr>
                             <td><?= $index + 1 ?></td>
-                            <td><?= htmlspecialchars($row['nama']) ?></td>
-                            <td><?= htmlspecialchars($row['email']) ?></td>
-                            <td><?= htmlspecialchars($row['no_telephone']) ?></td>
-                            <td><span class="badge bg-primary"><?= $row['role'] ?></span></td>
+                            <td><?= htmlspecialchars($row['nama_nasabah']) ?></td>
+                            <td><?= htmlspecialchars($row['jenis_sampah']) ?></td>
+                            <td><?= htmlspecialchars($row['berat_sampah']) ?> Kg</td>
+                            <td><?= htmlspecialchars($row['tanggal_transaksi']) ?></td>
                             <td>
                                 <?php if ($row['status'] == true): ?>
-                                    <span class="badge bg-success">Aktif</span>
+                                    <span class="badge bg-success">Berhasil</span>
                                 <?php else: ?>
-                                    <span class="badge bg-secondary">Nonaktif</span>
+                                    <span class="badge bg-secondary">Gagal</span>
                                 <?php endif; ?>
                             </td>
                             <td>
@@ -142,8 +141,6 @@ if ($result->num_rows > 0) {
                                     data-bs-target="#modalDetail<?= $row['id'] ?>">
                                     Detail
                                 </button>
-                                <!-- tombol edit -->
-                                <a href="update.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
                                 <!-- tombol hapus -->
                                 <a href="delete.php?id=<?= $row['id'] ?>" onclick="return confirm('Yakin ingin menghapus data ini?')" class="btn btn-sm btn-danger">Hapus</a>
                             </td>
@@ -158,16 +155,19 @@ if ($result->num_rows > 0) {
                     <div class="modal-dialog modal-dialog-scrollable">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="modalDetailLabel<?= $row['id'] ?>">Detail Admin</h5>
+                                <h5 class="modal-title" id="modalDetailLabel<?= $row['id'] ?>">Detail Transaksi</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <p><strong>Nama:</strong> <?= htmlspecialchars($row['nama']) ?></p>
-                                <p><strong>Email:</strong> <?= htmlspecialchars($row['email']) ?></p>
-                                <p><strong>No HP:</strong> <?= htmlspecialchars($row['no_telephone']) ?></p>
-                                <p><strong>Role:</strong> <?= htmlspecialchars($row['role']) ?></p>
+                                <p><strong>Nin:</strong> <?= htmlspecialchars($row['nin']) ?></p>
+                                <p><strong>Nama:</strong> <?= htmlspecialchars($row['nama_nasabah']) ?></p>
+                                <p><strong>Jenis Sampah:</strong> <?= htmlspecialchars($row['jenis_sampah']) ?></p>
+                                <p><strong>Berat Sampah:</strong> <?= htmlspecialchars($row['berat_sampah']) ?></p>
+                                <p><strong>Poin:</strong> <?= htmlspecialchars($row['total_poin']) ?></p>
+                                <p><strong>Saldo Nasabah:</strong> <?= htmlspecialchars($row['saldo_poin']) ?></p>
+                                <p><strong>Tanggal Transaksi:</strong> <?= htmlspecialchars($row['tanggal_transaksi']) ?></p>
                                 <p><strong>Status:</strong>
-                                    <?= $row['status'] ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-secondary">Nonaktif</span>' ?>
+                                    <?= $row['status'] ? '<span class="badge bg-success">Berhasil</span>' : '<span class="badge bg-secondary">Gagal</span>' ?>
                                 </p>
                                 <p><strong>Tanggal Input:</strong> <?= htmlspecialchars($row['created_at']) ?></p>
                                 <p><strong>Tanggal Update:</strong> <?= htmlspecialchars($row['updated_at']) ?></p>
@@ -181,7 +181,7 @@ if ($result->num_rows > 0) {
             <?php endforeach; ?>
         </div>
     </div>
-
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
