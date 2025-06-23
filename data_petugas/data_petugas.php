@@ -109,7 +109,6 @@ if ($result->num_rows > 0) {
                     <tr>
                         <th>No</th>
                         <th>Nama</th>
-                        <th>Email</th>
                         <th>No Telephone</th>
                         <th>Role</th>
                         <th>Status</th>
@@ -123,7 +122,6 @@ if ($result->num_rows > 0) {
                         <tr>
                             <td><?= $index + 1 ?></td>
                             <td><?= htmlspecialchars($row['nama']) ?></td>
-                            <td><?= htmlspecialchars($row['email']) ?></td>
                             <td><?= htmlspecialchars($row['no_telephone']) ?></td>
                             <td><span class="badge bg-primary"><?= $row['role'] ?></span></td>
                             <td>
@@ -163,6 +161,8 @@ if ($result->num_rows > 0) {
                             <div class="modal-body">
                                 <p><strong>Nama:</strong> <?= htmlspecialchars($row['nama']) ?></p>
                                 <p><strong>Email:</strong> <?= htmlspecialchars($row['email']) ?></p>
+                                <p><strong>Username:</strong> <?= htmlspecialchars($row['username']) ?></p>
+                                <p><strong>Password:</strong> <?= htmlspecialchars($row['password']) ?></p>
                                 <p><strong>No HP:</strong> <?= htmlspecialchars($row['no_telephone']) ?></p>
                                 <p><strong>Role:</strong> <?= htmlspecialchars($row['role']) ?></p>
                                 <p><strong>Status:</strong>

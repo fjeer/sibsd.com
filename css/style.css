@@ -64,3 +64,22 @@ body {
 .card-transaksi {
     background-color: #FFD93D;
 }
+
+.password-input-group {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 15px; 
+    top: 50%; 
+    transform: translateY(-50%) translateY(3px);
+    cursor: pointer;
+    z-index: 3; 
+    color: #6c757d; 
+}
+
+.password-input-group .form-control {
+    padding-right: 40px;
+}
+

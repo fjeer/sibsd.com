@@ -1,25 +1,67 @@
 <?php
 session_start();
-require '../koneksi.php';
+require '../koneksi.php'; // Pastikan file koneksi.php sudah benar dan berisi objek $koneksi (MySQLi)
 
 $alert = "";
 if (isset($_POST['submit'])) {
     $nama = $_POST['nama'];
     $email = $_POST['email'];
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
     $no_telephone = $_POST['no_telephone'];
     $role = $_POST['role'];
 
-    $sql = "INSERT INTO tb_admin (nama, email, no_telephone, role) 
-        VALUES ('$nama', '$email', '$no_telephone', '$role')";
-    if ($koneksi->query($sql) === TRUE) {
-        $_SESSION['pesan'] = 'Data admin berhasil ditambahkan!';
-        $_SESSION['tipe'] = 'success';
-    } else {
-        $_SESSION['pesan'] = 'Data admin gagal ditambahkan!';
+    // --- Validasi Username ---
+    // Memastikan username hanya huruf kecil dan maksimal 12 karakter
+    if (!preg_match("/^[a-z]{1,12}$/", $username)) {
+        $_SESSION['pesan'] = 'Username hanya boleh huruf kecil dan maksimal 12 karakter!';
+        $_SESSION['tipe'] = 'warning';
+    }
+
+    // --- Validasi Password ---
+    // Memastikan password 6-12 karakter, kombinasi alfanumerik
+    if (!preg_match("/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,12}$/", $password)) {
+        $_SESSION['pesan'] = 'Password harus 6-12 karakter, kombinasi alfanumerik!';
+        $_SESSION['tipe'] = 'warning';
+    }
+
+    // --- Validasi Konfirmasi Password ---
+    if ($password !== $confirm_password) {
+        $_SESSION['pesan'] = 'Konfirmasi password tidak cocok dengan password!';
         $_SESSION['tipe'] = 'danger';
     }
 
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+
+    $sql = "INSERT INTO tb_admin (nama, email, username, password, no_telephone, role) VALUES (?, ?, ?, ?, ?, ?)";
+
+    // Membuat prepared statement
+    $stmt = $koneksi->prepare($sql);
+
+    // Memeriksa jika prepared statement gagal
+    if ($stmt === FALSE) {
+        $_SESSION['pesan'] = 'Error saat menyiapkan statement: ' . $koneksi->error;
+        $_SESSION['tipe'] = 'warning';
+    }
+
+    $stmt->bind_param("ssssss", $nama, $email, $username, $hashed_password, $no_telephone, $role);
+
+    // Mengeksekusi statement
+    if ($stmt->execute()) {
+        $_SESSION['pesan'] = 'Data admin berhasil ditambahkan!';
+        $_SESSION['tipe'] = 'success';
+    } else {
+        $_SESSION['pesan'] = 'Data admin gagal ditambahkan! Error: ' . $stmt->error;
+        $_SESSION['tipe'] = 'danger';
+    }
+
+    // Menutup statement
+    $stmt->close();
+
     header("Location: data_admin.php");
+    exit();
 }
 ?>
 
@@ -32,6 +74,7 @@ if (isset($_POST['submit'])) {
     <title>Bank Sampah Digital</title>
     <link rel="icon" href="../favicon.ico" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -85,18 +128,51 @@ if (isset($_POST['submit'])) {
         <div class="content pt-5 ms-250 px-3">
             <h2 class="mb-4">Tambah Data Admin</h2>
 
+            <?php
+            // --- Tampilkan Alert ---
+            if (isset($_SESSION['pesan'])): ?>
+                <div class="alert alert-<?= $_SESSION['tipe'] ?> alert-dismissible fade show mb-3" role="alert">
+                    <strong><?= $_SESSION['pesan'] ?></strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php
+                unset($_SESSION['pesan']);
+                unset($_SESSION['tipe']);
+            endif; ?>
+
             <form action="" method="POST">
                 <div class="mb-3">
                     <label for="nama" class="form-label">Nama :</label>
-                    <input type="text" class="form-control" name="nama" id="nama" placeholder="contoh : Budie Arie" required>
+                    <input type="text" class="form-control" name="nama" id="nama" placeholder="contoh : Budie Arie" required autocomplete="off">
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email :</label>
-                    <input type="email" class="form-control" name="email" id="email" placeholder="contoh : Budiegaming@gamil.kom" required>
+                    <input type="email" class="form-control" name="email" id="email" placeholder="contoh : Budiegaming@gamil.kom" required autocomplete="off">
+                </div>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username :</label>
+                    <input type="text" class="form-control" name="username" id="username" placeholder="contoh : budie" maxlength="12" pattern="[a-z]{1,12}" title="Username hanya boleh huruf kecil dan maksimal 12 karakter" aria-describedby="usernameHelp" required autocomplete="off">
+                    <div id="usernameHelp" class="form-text">Username hanya boleh huruf kecil dan maksimal 12 karakter.</div>
+                </div>
+                <div class="mb-3 password-input-group">
+                    <label for="password" class="form-label">Password :</label>
+                    <input type="password" class="form-control" name="password" id="password" minlength="6" maxlength="12" pattern="^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,12}$" title="Password harus 6-12 karakter, kombinasi huruf dan angka" aria-describedby="passwordHelp" required autocomplete="off">
+                    <span class="password-toggle" onclick="togglePasswordVisibility('password')">
+                        <i class="fas fa-eye-slash" id="togglePasswordIcon"></i>
+                    </span>
+                    <div id="passwordHelp" class="form-text">Password harus 6-12 karakter, kombinasi alfanumerik.</div>
+                </div>
+                <div class="mb-3 password-input-group">
+                    <label for="confirm_password" class="form-label">Konfirmasi Password :</label>
+                    <input type="password" class="form-control" name="confirm_password" id="confirm_password" aria-describedby="confirmpasswordHelp" required autocomplete="off">
+                    <span class="password-toggle" onclick="togglePasswordVisibility('confirm_password')">
+                        <i class="fas fa-eye-slash" id="toggleConfirmPasswordIcon"></i>
+                    </span>
+                    <div id="confirmpasswordHelp" class="form-text">Konfirmasi password yang anda inputkan sebelumnya.</div>
                 </div>
                 <div class="mb-3">
                     <label for="no_telephone" class="form-label">No Telephone :</label>
-                    <input type="number" class="form-control" name="no_telephone" id="no_telephone" placeholder="contoh : 08262xxxxxxx" required>
+                    <input type="number" class="form-control" name="no_telephone" id="no_telephone" placeholder="contoh : 08262xxxxxxx" required autocomplete="off">
                 </div>
                 <div class="mb-3">
                     <label for="role" class="form-label">Role :</label>
@@ -114,6 +190,7 @@ if (isset($_POST['submit'])) {
     </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/script2.js"></script>
 </body>
 
 </html>

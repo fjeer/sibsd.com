@@ -2,37 +2,105 @@
 session_start();
 require '../koneksi.php';
 
-$id = $_GET['id'];
-$data = $koneksi->query("SELECT * FROM tb_admin WHERE id = '$id'");
-$row = $data->fetch_assoc();
+$id = $_GET['id'] ?? null;
+if (!$id) {
+    $_SESSION['pesan'] = 'ID admin tidak ditemukan!';
+    $_SESSION['tipe'] = 'danger';
+    header("Location: data_admin.php");
+    exit();
+}
 
+$stmt_select = $koneksi->prepare("SELECT id, nama, email, username, password, no_telephone, role, status FROM tb_admin WHERE id = ?");
+if ($stmt_select === FALSE) {
+    // Handle error preparing statement
+    $_SESSION['pesan'] = 'Error menyiapkan query data admin: ' . $koneksi->error;
+    $_SESSION['tipe'] = 'danger';
+    header("Location: data_admin.php");
+    exit();
+}
+$stmt_select->bind_param("i", $id);
+$stmt_select->execute();
+$result_select = $stmt_select->get_result();
+$row = $result_select->fetch_assoc();
+$stmt_select->close();
+
+if (!$row) {
+    $_SESSION['pesan'] = 'Data admin tidak ditemukan!';
+    $_SESSION['tipe'] = 'danger';
+    header("Location: data_admin.php");
+    exit();
+}
+
+// Cek apakah form disubmit
 if (isset($_POST['submit'])) {
     $nama = $_POST['nama'];
     $email = $_POST['email'];
+    $username = $_POST['username'];
     $no_telephone = $_POST['no_telephone'];
     $role = $_POST['role'];
-    $status = $_POST['status'] ? 1 : 0;
+    $status = isset($_POST['status']) && $_POST['status'] === 'true' ? 1 : 0;
 
-    $sql = "UPDATE tb_admin SET 
-            nama='$nama',
-            email='$email',
-            no_telephone = '$no_telephone',
-            role = '$role',
-            status = '$status',
-            updated_at = CURRENT_TIMESTAMP() 
-            WHERE id='$id'";
+    $new_password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
 
-    if ($koneksi->query($sql) === TRUE) {
-        $_SESSION['pesan'] = 'Data admin berhasil diperbarui!';
-        $_SESSION['tipe'] = 'success';
+    $hashed_password_to_update = $row['password']; // Default: gunakan password lama
+
+    // --- Validasi Password Baru (jika diisi) ---
+    if (!empty($new_password)) {
+        // Validasi panjang dan format password
+        if (!preg_match("/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,12}$/", $new_password)) {
+            $_SESSION['pesan'] = 'Password baru harus 6-12 karakter, kombinasi alfanumerik!';
+            $_SESSION['tipe'] = 'danger';
+        }
+
+        // Validasi konfirmasi password
+        if ($new_password !== $confirm_password) {
+            $_SESSION['pesan'] = 'Konfirmasi password tidak cocok dengan password baru!';
+            $_SESSION['tipe'] = 'danger';
+        }
+
+        // Hash password baru jika valid
+        $hashed_password_to_update = password_hash($new_password, PASSWORD_DEFAULT);
     } else {
-        $_SESSION['pesan'] = 'Data admin gagal diperbarui!';
+        // Jika password baru tidak diisi, pastikan confirm_password juga kosong
+        if (!empty($confirm_password)) {
+            $_SESSION['pesan'] = 'Jika tidak ingin mengubah password, kosongkan juga konfirmasi password!';
+            $_SESSION['tipe'] = 'danger';
+        }
+    }
+
+    $sql_update = "UPDATE tb_admin SET 
+                   nama = ?,
+                   email = ?,
+                   username = ?,
+                   password = ?,
+                   no_telephone = ?,
+                   role = ?,
+                   status = ?,
+                   updated_at = CURRENT_TIMESTAMP() 
+                   WHERE id = ?";
+
+    $stmt_update = $koneksi->prepare($sql_update);
+
+    if ($stmt_update === FALSE) {
+        $_SESSION['pesan'] = 'Error saat menyiapkan statement update: ' . $koneksi->error;
         $_SESSION['tipe'] = 'danger';
     }
 
-    header("Location: data_admin.php");
-}
+    $stmt_update->bind_param("ssssssii", $nama, $email, $username, $hashed_password_to_update, $no_telephone, $role, $status, $id);
 
+    if ($stmt_update->execute()) {
+        $_SESSION['pesan'] = 'Data admin berhasil diperbarui!';
+        $_SESSION['tipe'] = 'success';
+    } else {
+        $_SESSION['pesan'] = 'Data admin gagal diperbarui! Error: ' . $stmt_update->error;
+        $_SESSION['tipe'] = 'danger';
+    }
+
+    $stmt_update->close();
+    header("Location: data_admin.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -41,9 +109,10 @@ if (isset($_POST['submit'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bank Sampah Digital</title>
+    <title>Edit Data Admin</title>
     <link rel="icon" href="../favicon.ico" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,7 +121,6 @@ if (isset($_POST['submit'])) {
 
 <body>
     <div class="container">
-        <!-- Navbar -->
         <nav class="navbar navbar-expand-lg shadow-sm navbar-custom fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="../index.php">
@@ -74,7 +142,6 @@ if (isset($_POST['submit'])) {
             </div>
         </nav>
 
-        <!-- Sidebar -->
         <div class="sidebar">
             <div class="container">
                 <ul class="nav nav-pills flex-column mt-3">
@@ -92,40 +159,70 @@ if (isset($_POST['submit'])) {
                 </ul>
             </div>
         </div>
-        <!-- Content -->
+
         <div class="content pt-5 ms-250 px-3">
             <h2 class="mb-4">Edit Data Admin</h2>
+
+            <?php
+            // --- Tampilkan Alert ---
+            if (isset($_SESSION['pesan'])): ?>
+                <div class="alert alert-<?= $_SESSION['tipe'] ?> alert-dismissible fade show mb-3" role="alert">
+                    <strong><?= $_SESSION['pesan'] ?></strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php
+                unset($_SESSION['pesan']);
+                unset($_SESSION['tipe']);
+            endif; ?>
 
             <form action="" method="POST">
                 <div class="mb-3">
                     <label for="nama" class="form-label">Nama :</label>
-                    <input type="text" class="form-control" name="nama" id="nama" value="<?= htmlspecialchars($row['nama']) ?>" required>
+                    <input type="text" class="form-control" name="nama" id="nama" value="<?= htmlspecialchars($row['nama']) ?>" required autocomplete="off">
                 </div>
-                <div class=" mb-3">
+                <div class="mb-3">
                     <label for="email" class="form-label">Email :</label>
-                    <input type="email" class="form-control" name="email" id="email" value="<?= htmlspecialchars($row['email']) ?>" required>
+                    <input type="email" class="form-control" name="email" id="email" value="<?= htmlspecialchars($row['email']) ?>" required autocomplete="off">
+                </div>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username :</label>
+                    <input type="text" class="form-control" name="username" id="username" value="<?= htmlspecialchars($row['username']) ?>" readonly autocomplete="off">
+                </div>
+                <div class="mb-3 password-input-group">
+                    <label for="password" class="form-label">Password Baru (kosongkan jika tidak diubah):</label>
+                    <input type="password" class="form-control" name="password" id="password" minlength="6" maxlength="12" pattern="^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,12}$" title="Password harus 6-12 karakter, kombinasi huruf dan angka" aria-describedby="passwordHelp" autocomplete="off">
+                    <span class="password-toggle" onclick="togglePasswordVisibility('password')">
+                        <i class="fas fa-eye-slash"></i>
+                    </span>
+                    <div id="passwordHelp" class="form-text">Password harus 6-12 karakter, kombinasi alfanumerik.</div>
+                </div>
+                <div class="mb-3 password-input-group">
+                    <label for="confirm_password" class="form-label">Konfirmasi Password Baru :</label>
+                    <input type="password" class="form-control" name="confirm_password" id="confirm_password" aria-describedby="confirmpasswordHelp" autocomplete="off">
+                    <span class="password-toggle" onclick="togglePasswordVisibility('confirm_password')">
+                        <i class="fas fa-eye-slash"></i>
+                    </span>
+                    <div id="confirmpasswordHelp" class="form-text">Konfirmasi password yang anda inputkan sebelumnya.</div>
                 </div>
                 <div class="mb-3">
                     <label for="no_telephone" class="form-label">No Telephone :</label>
-                    <input type="number" class="form-control" name="no_telephone" id="no_telephone" value="<?= htmlspecialchars($row['no_telephone']) ?>" required>
+                    <input type="number" class="form-control" name="no_telephone" id="no_telephone" value="<?= htmlspecialchars($row['no_telephone']) ?>" required autocomplete="off">
                 </div>
                 <div class="mb-3">
                     <label for="role" class="form-label">Role :</label>
                     <select class="form-select" name="role" required>
-                        <option value="" disabled <?= $row['role'] == '' ? 'selected' : '' ?>>-- Pilih Role --</option>
+                        <option value="" disabled>-- Pilih Role --</option>
                         <option value="superadmin" <?= $row['role'] == 'superadmin' ? 'selected' : '' ?>>Superadmin</option>
                         <option value="admin" <?= $row['role'] == 'admin' ? 'selected' : '' ?>>Admin</option>
                     </select>
                 </div>
                 <label class="form-label d-block">Status :</label>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="status" id="statusAktif" value="true"
-                        <?= $row['status'] ? 'checked' : '' ?>>
+                    <input class="form-check-input" type="radio" name="status" id="statusAktif" value="true" <?= $row['status'] == 1 ? 'checked' : '' ?>>
                     <label class="form-check-label" for="statusAktif">Aktif</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="status" id="statusNonAktif" value="false"
-                        <?= !$row['status'] ? 'checked' : '' ?>>
+                    <input class="form-check-input" type="radio" name="status" id="statusNonAktif" value="false" <?= $row['status'] == 0 ? 'checked' : '' ?>>
                     <label class="form-check-label" for="statusNonAktif">Non Aktif</label>
                 </div>
 
@@ -137,8 +234,8 @@ if (isset($_POST['submit'])) {
         </div>
 
     </div>
-    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/script2.js"></script>
 </body>
 
 </html>
