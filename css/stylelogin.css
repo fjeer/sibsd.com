@@ -1,0 +1,121 @@
+/* CSS untuk Halaman Login (login_style.css) */
+
+body {
+    background: 
+        linear-gradient(rgba(0, 123, 255, 0.35), rgba(0, 123, 255, 0.35)),
+        url('../img/background_login.jpg') center center / cover no-repeat,
+        #007bff;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0; 
+    padding: 20px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.main-container {
+    display: flex;
+    background-color: #fff;
+    border-radius: 20px; /* Radius sudut untuk container utama */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Penting untuk rounded corners pada gambar dan form */
+    max-width: 900px; /* Lebar maksimum container */
+    width: 100%; /* Agar responsif */
+}
+
+.image-section {
+    flex: 1;
+    background: 
+    linear-gradient(rgba(0, 123, 255, 0.35), rgba(0, 123, 255, 0.35)),
+    url('../img/login.jpg') center center / cover no-repeat,
+    #C4D9FF;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 10px;
+}
+
+.login-form-section {
+    flex: 1; /* Ambil setengah lebar */
+    padding: 40px; /* Padding di dalam form section */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-form-section h2 {
+    margin-bottom: 5px; /* Kurangi margin bawah */
+    color: #333;
+    text-align: left; /* Sesuaikan dengan gambar */
+    font-size: 1.8rem; /* Ukuran font H2 */
+    font-weight: 700;
+}
+.login-form-section .subtitle {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.login-form-section .form-label {
+    font-weight: 600; /* Font lebih tebal */
+    margin-bottom: 5px; /* Jarak antara label dan input */
+}
+.login-form-section .form-control {
+    border-radius: 8px; /* Sudut input field */
+    padding: 10px 15px; /* Padding input field */
+}
+
+
+/* .login-form-section .text-center {
+    margin-top: 20px;
+    font-size: 0.85rem;
+    color: #6c757d;
+} */
+.login-form-section .text-center a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 600;
+}
+.login-form-section .text-center a:hover {
+    text-decoration: underline;
+}
+
+/* Style untuk password toggle */
+.password-input-group {
+    position: relative;
+}
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%) translateY(15px);
+    cursor: pointer;
+    z-index: 3;
+    color: #6c757d;
+}
+.password-input-group .form-control {
+    padding-right: 40px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column; /* Ubah tata letak menjadi kolom pada layar kecil */
+        max-width: 450px; /* Batasi lebar untuk tampilan mobile */
+    }
+    .image-section {
+        display: none; /* Sembunyikan bagian gambar pada layar kecil jika tidak diperlukan */
+        padding: 15px;
+    }
+    .login-form-section {
+        padding: 25px;
+    }
+    .login-form-section h2 {
+        font-size: 1.5rem;
+    }
+}

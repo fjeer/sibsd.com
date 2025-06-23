@@ -37,7 +37,7 @@ require 'dashboard.php';
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                                 <li><a class="dropdown-item" href="#">Akun Saya</a></li>
-                                <li><a class="dropdown-item text-danger" href="#">Keluar</a></li>
+                                <li><a class="dropdown-item text-danger" href="login/logout.php">Keluar</a></li>
                             </ul>
                         </li>
                     </ul>
