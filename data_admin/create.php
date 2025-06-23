@@ -1,8 +1,7 @@
 <?php
 session_start();
-require '../koneksi.php'; // Pastikan file koneksi.php sudah benar dan berisi objek $koneksi (MySQLi)
+require '../koneksi.php';
 
-$alert = "";
 if (isset($_POST['submit'])) {
     $nama = $_POST['nama'];
     $email = $_POST['email'];

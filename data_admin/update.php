@@ -190,7 +190,7 @@ if (isset($_POST['submit'])) {
                 </div>
                 <div class="mb-3 password-input-group">
                     <label for="password" class="form-label">Password Baru (kosongkan jika tidak diubah):</label>
-                    <input type="password" class="form-control" name="password" id="password" minlength="6" maxlength="12" pattern="^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,12}$" title="Password harus 6-12 karakter, kombinasi huruf dan angka" aria-describedby="passwordHelp" autocomplete="off">
+                    <input type="password" class="form-control" name="password" id="password" minlength="6" maxlength="12" pattern="^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,12}$" placeholder="******" title="Password harus 6-12 karakter, kombinasi huruf dan angka" aria-describedby="passwordHelp" autocomplete="off">
                     <span class="password-toggle" onclick="togglePasswordVisibility('password')">
                         <i class="fas fa-eye-slash"></i>
                     </span>
