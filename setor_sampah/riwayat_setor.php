@@ -179,7 +179,7 @@ if ($result && $result->num_rows > 0) {
                                     <p><strong>Role:</strong> <?= htmlspecialchars($row['role']) ?></p>
                                     <p><strong>Tanggal Transaksi:</strong> <?= htmlspecialchars($row['tanggal_transaksi']) ?></p>
                                     <p><strong>Total Poin:</strong> <?= htmlspecialchars($row['total_poin']) ?></p>
-                                    <p><strong>Saldo Poin:</strong> <?= htmlspecialchars($row['saldo_poin']) ?></p>
+                                    <p><strong>Saldo:</strong> <?= htmlspecialchars($row['saldo_poin']) ?></p>
                                     <p><strong>Status:</strong>
                                         <?= $row['status_transaksi'] ? '<span class="badge bg-success">Berhasil</span>' : '<span class="badge bg-secondary">Dibatalkan</span>' ?>
                                     </p>

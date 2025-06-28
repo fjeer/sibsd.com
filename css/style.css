@@ -8,6 +8,7 @@ body {
 .navbar-custom {
     background-color: #C4D9FF;
 }
+
 .profile-img {
     transition: all 0.3s ease;
     border: 5px solid transparent;

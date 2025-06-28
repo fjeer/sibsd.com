@@ -46,7 +46,7 @@ if (isset($_SESSION['login_message'])) {
             </div>
 
             <h2 class="text-center">Hai, Selamat datang</h2>
-            <p class="subtitle">Baru di BSD? <a href="#">Daftar Gratis</a></p>
+            <p class="subtitle">Baru di BSD? <a href="">Daftar Gratis</a></p>
             <h4 class="text-center">Login</h4>
             <!-- Altert -->
             <?php if ($alert_message): ?>
@@ -61,12 +61,18 @@ if (isset($_SESSION['login_message'])) {
                     <label for="user" class="form-label">Username atau Email</label>
                     <input type="text" class="form-control" id="user" name="user" placeholder="username atau email address" required autocomplete="username">
                 </div>
-                <div class="mb-3 password-input-group">
+                <div class="mb-1 password-input-group">
                     <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
                     <span class="password-toggle" onclick="togglePasswordVisibility('password')">
                         <i class="fas fa-eye-slash"></i>
                     </span>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="rememberMe" name="remember_me">
+                    <label class="form-check-label" for="rememberMe">
+                        Jangan lupakan aku
+                    </label>
                 </div>
                 <div class="d-grid gap-2">
                     <button type="submit" class="btn btn-primary" name="submit">Login</button>
@@ -74,7 +80,7 @@ if (isset($_SESSION['login_message'])) {
             </form>
 
             <p class="text-center mt-4">
-                Dengan melanjutkan, kamu menerima <a href="#">Syarat Penggunaan</a> dan <a href="#">Kebijakan Privasi</a> kami.
+                Dengan melanjutkan, kamu menerima <a href="">Syarat Penggunaan</a> dan <a href="">Kebijakan Privasi</a> kami.
             </p>
         </div>
     </div>

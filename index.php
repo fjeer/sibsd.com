@@ -1,6 +1,13 @@
 <?php
-require 'koneksi.php';
+session_start();
+require_once 'koneksi.php';
 require 'dashboard.php';
+// require_once 'cookies.php';
+
+if (!isset($_SESSION['loggedin'])) {
+    header("Location: login/login.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -36,7 +43,13 @@ require 'dashboard.php';
                                 <img src="img/pp wa kosong sad.jpg" alt="Profile" class="profile-img rounded-circle" width="50" height="50">
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                                <li><a class="dropdown-item" href="#">Akun Saya</a></li>
+                                <li>
+                                    <a class="dropdown-item" href="">
+                                        <?= $_SESSION['nama_lengkap']; ?>
+                                        <p class="text-body-secondary role"><?= "(" . $_SESSION['role'] . ")"; ?></p>
+                                    </a>
+
+                                </li>
                                 <li><a class="dropdown-item text-danger" href="login/logout.php">Keluar</a></li>
                             </ul>
                         </li>
