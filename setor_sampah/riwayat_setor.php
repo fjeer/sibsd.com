@@ -1,27 +1,40 @@
 <?php
+session_start();
 require '../koneksi.php';
 
-// Query data
-$query = "SELECT 
-    st.id,
-    n.nin,
-    n.nama as nama_nasabah,
-    s.jenis_sampah,
-    st.berat_sampah,
-    st.total_poin,
-    n.saldo_poin,
-    st.tanggal_transaksi,
-    st.status,
-    st.created_at,
-    st.updated_at
-FROM tb_setor_sampah st
-JOIN tb_nasabah n ON st.id_nasabah = n.id
-JOIN tb_sampah s ON st.id_sampah = s.id";
+if (!isset($_SESSION['loggedin']) || !isset($_SESSION['user_id'])) {
+    header("Location: ../login/login.php");
+    exit();
+}
+
+$query = "
+    SELECT
+        ts.id,
+        n.nin,
+        n.nama AS nama_nasabah,
+        ts.total_poin,
+        n.saldo_poin,
+        ts.tanggal_transaksi,
+        ts.status_transaksi,
+        ts.created_at,
+        ts.updated_at,
+        a.nama AS nama_admin,
+        a.role
+    FROM
+        tb_setoran ts
+    JOIN
+        tb_nasabah n ON ts.id_nasabah = n.id
+    JOIN
+        tb_admin a ON ts.id_admin = a.id
+    ORDER BY
+        ts.tanggal_transaksi DESC, ts.created_at DESC;
+";
+
 $result = $koneksi->query($query);
-$data = [];
-if ($result->num_rows > 0) {
+$detail_transaksi = [];
+if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $data[] = $row;
+        $detail_transaksi[] = $row;
     }
 }
 ?>
@@ -43,7 +56,6 @@ if ($result->num_rows > 0) {
 
 <body>
     <div class="container">
-        <!-- Navbar -->
         <nav class="navbar navbar-expand-lg shadow-sm navbar-custom fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="../index.php">
@@ -57,7 +69,7 @@ if ($result->num_rows > 0) {
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                                 <li><a class="dropdown-item" href="#">Akun Saya</a></li>
-                                <li><a class="dropdown-item text-danger" href="#">Keluar</a></li>
+                                <li><a class="dropdown-item text-danger" href="../admin/logout.php">Keluar</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -66,7 +78,6 @@ if ($result->num_rows > 0) {
         </nav>
 
 
-        <!-- Sidebar -->
         <div class="sidebar">
             <div class="container">
                 <ul class="nav nav-pills flex-column mt-3">
@@ -85,12 +96,10 @@ if ($result->num_rows > 0) {
             </div>
         </div>
 
-        <!-- Content -->
         <div class="content pt-5 ms-250 px-3">
-            <!-- Alert Pesan -->
             <?php
-            session_start();
-            if (isset($_SESSION['pesan'])):
+            // Alert
+            if (isset($_SESSION['pesan'])) :
             ?>
                 <div class="alert alert-<?= $_SESSION['tipe'] ?> alert-dismissible fade show mb-3" role="alert">
                     <strong><?= $_SESSION['pesan'] ?></strong>
@@ -103,84 +112,89 @@ if ($result->num_rows > 0) {
             ?>
 
             <h2 class="mb-4">Riwayat Setor Sampah</h2>
+            <div class="card shadow-sm border-0 p-3">
+                <div class="card-body"></div>
 
-            <table class="table table-striped-columns table-hover">
-                <thead class="table-info">
-                    <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>Jenis Sampah</th>
-                        <th>Berat Sampah</th>
-                        <th>Tanggal Transaksi</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody class="table-secondary">
-                    <?php
-                    foreach ($data as $index => $row):
-                    ?>
+                <table class="table table-striped-columns table-hover">
+                    <thead class="table-info">
                         <tr>
-                            <td><?= $index + 1 ?></td>
-                            <td><?= htmlspecialchars($row['nama_nasabah']) ?></td>
-                            <td><?= htmlspecialchars($row['jenis_sampah']) ?></td>
-                            <td><?= htmlspecialchars($row['berat_sampah']) ?> Kg</td>
-                            <td><?= htmlspecialchars($row['tanggal_transaksi']) ?></td>
-                            <td>
-                                <?php if ($row['status'] == true): ?>
-                                    <span class="badge bg-success">Berhasil</span>
-                                <?php else: ?>
-                                    <span class="badge bg-secondary">Gagal</span>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <!-- tombol lihat detail -->
-                                <button
-                                    class="btn btn-info btn-sm"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#modalDetail<?= $row['id'] ?>">
-                                    Detail
-                                </button>
-                                <!-- tombol hapus -->
-                                <a href="delete.php?id=<?= $row['id'] ?>" onclick="return confirm('Yakin ingin menghapus data ini?')" class="btn btn-sm btn-danger">Hapus</a>
-                            </td>
+                            <th>No</th>
+                            <th>Nama Nasabah</th>
+                            <th>Tanggal</th>
+                            <th>Status</th>
+                            <th>Petugas</th>
+                            <th>Action</th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody class="table-secondary">
+                        <?php if (empty($detail_transaksi)) : ?>
+                            <tr>
+                                <td colspan="8" class="text-center">Tidak ada riwayat transaksi ditemukan.</td>
+                            </tr>
+                        <?php else : ?>
+                            <?php foreach ($detail_transaksi as $index => $row) : ?>
+                                <tr>
+                                    <td><?= $index + 1 ?></td>
+                                    <td><?= htmlspecialchars($row['nama_nasabah']) ?></td>
+                                    <td><?= htmlspecialchars($row['tanggal_transaksi']) ?></td>
+                                    <td>
+                                        <?php if ($row['status_transaksi'] == 1) :
+                                        ?>
+                                            <span class="badge bg-success">Berhasil</span>
+                                        <?php else :
+                                        ?>
+                                            <span class="badge bg-danger">Gagal/Dibatalkan</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td><?= htmlspecialchars($row['nama_admin']) ?></td>
+                                    <td>
+                                        <!-- tombol lihat detail -->
+                                        <button
+                                            class="btn btn-info btn-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalDetail<?= $row['id'] ?>">
+                                            Detail
+                                        </button>
+                                        <a href="delete_setoran.php?id=<?= $row['id'] ?>" onclick="return confirm('Yakin ingin menghapus transaksi ini beserta detailnya?')" class="btn btn-sm btn-danger">Hapus</a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
 
-            <!-- Modal Detail -->
-            <?php foreach ($data as $row): ?>
-                <div class="modal fade" id="modalDetail<?= $row['id'] ?>" tabindex="-1" aria-labelledby="modalDetailLabel<?= $row['id'] ?>" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-scrollable">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="modalDetailLabel<?= $row['id'] ?>">Detail Transaksi</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <p><strong>Nomor Induk Nasabah:</strong> <?= htmlspecialchars($row['nin']) ?></p>
-                                <p><strong>Nama:</strong> <?= htmlspecialchars($row['nama_nasabah']) ?></p>
-                                <p><strong>Jenis Sampah:</strong> <?= htmlspecialchars($row['jenis_sampah']) ?></p>
-                                <p><strong>Berat Sampah:</strong> <?= htmlspecialchars($row['berat_sampah']) ?> Kg</p>
-                                <p><strong>Poin:</strong> <?= htmlspecialchars($row['total_poin']) ?></p>
-                                <p><strong>Saldo Nasabah:</strong> Rp. <?= htmlspecialchars($row['saldo_poin']) ?></p>
-                                <p><strong>Tanggal Transaksi:</strong> <?= htmlspecialchars($row['tanggal_transaksi']) ?></p>
-                                <p><strong>Status:</strong>
-                                    <?= $row['status'] ? '<span class="badge bg-success">Berhasil</span>' : '<span class="badge bg-secondary">Gagal</span>' ?>
-                                </p>
-                                <p><strong>Tanggal Input:</strong> <?= htmlspecialchars($row['created_at']) ?></p>
-                                <p><strong>Tanggal Update:</strong> <?= htmlspecialchars($row['updated_at']) ?></p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <!-- Modal Detail -->
+                <?php foreach ($detail_transaksi as $row): ?>
+                    <div class="modal fade" id="modalDetail<?= $row['id'] ?>" tabindex="-1" aria-labelledby="modalDetailLabel<?= $row['id'] ?>" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalDetailLabel<?= $row['id'] ?>">Detail Petugas</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p><strong>Nomor Induk Nasabah:</strong> <?= htmlspecialchars($row['nin']) ?></p>
+                                    <p><strong>Nama Nasabah:</strong> <?= htmlspecialchars($row['nama_nasabah']) ?></p>
+                                    <p><strong>Petugas:</strong> <?= htmlspecialchars($row['nama_admin']) ?></p>
+                                    <p><strong>Role:</strong> <?= htmlspecialchars($row['role']) ?></p>
+                                    <p><strong>Tanggal Transaksi:</strong> <?= htmlspecialchars($row['tanggal_transaksi']) ?></p>
+                                    <p><strong>Total Poin:</strong> <?= htmlspecialchars($row['total_poin']) ?></p>
+                                    <p><strong>Saldo Poin:</strong> <?= htmlspecialchars($row['saldo_poin']) ?></p>
+                                    <p><strong>Status:</strong>
+                                        <?= $row['status_transaksi'] ? '<span class="badge bg-success">Berhasil</span>' : '<span class="badge bg-secondary">Dibatalkan</span>' ?>
+                                    </p>
+                                    <p><strong>Tanggal Input:</strong> <?= htmlspecialchars($row['created_at']) ?></p>
+                                    <p><strong>Tanggal Update:</strong> <?= htmlspecialchars($row['updated_at']) ?></p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            <?php endforeach; ?>
+                <?php endforeach; ?>
+            </div>
         </div>
-    </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

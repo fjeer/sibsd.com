@@ -1,13 +1,11 @@
 <?php
 session_start();
 
-// Periksa apakah pengguna sudah login, jika ya, redirect ke dashboard
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
-    header("Location: ../index.php"); // Atau ke halaman dashboard Anda
+    header("Location: ../index.php");
     exit();
 }
 
-// Inisialisasi variabel untuk pesan alert
 $alert_message = '';
 $alert_type = '';
 
