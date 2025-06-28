@@ -138,50 +138,52 @@ if (isset($_POST['submit'])) {
                 unset($_SESSION['pesan']);
                 unset($_SESSION['tipe']);
             endif; ?>
-
-            <form action="" method="POST">
-                <div class="mb-3">
-                    <label for="nama" class="form-label">Nama :</label>
-                    <input type="text" class="form-control" name="nama" id="nama" placeholder="contoh : Budie Arie" required autocomplete="off">
+            <div class="card shadow-sm border-0 p-3">
+                <div class="card-body">
+                    <form action="" method="POST">
+                        <div class="mb-3">
+                            <label for="nama" class="form-label">Nama :</label>
+                            <input type="text" class="form-control" name="nama" id="nama" placeholder="contoh : Budie Arie" required autocomplete="off">
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email :</label>
+                            <input type="email" class="form-control" name="email" id="email" placeholder="contoh : Budiegaming@gamil.kom" required autocomplete="off">
+                        </div>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username :</label>
+                            <input type="text" class="form-control" name="username" id="username" placeholder="contoh : budie" maxlength="12" pattern="[a-z]{1,12}" title="Username hanya boleh huruf kecil dan maksimal 12 karakter" aria-describedby="usernameHelp" required autocomplete="off">
+                            <div id="usernameHelp" class="form-text">Username hanya boleh huruf kecil dan maksimal 12 karakter.</div>
+                        </div>
+                        <div class="mb-3 password-input-group">
+                            <label for="password" class="form-label">Password :</label>
+                            <input type="password" class="form-control" name="password" id="password" minlength="6" maxlength="12" pattern="^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,12}$" title="Password harus 6-12 karakter, kombinasi huruf dan angka" aria-describedby="passwordHelp" required autocomplete="off">
+                            <span class="password-toggle" onclick="togglePasswordVisibility('password')">
+                                <i class="fas fa-eye-slash" id="togglePasswordIcon"></i>
+                            </span>
+                            <div id="passwordHelp" class="form-text">Password harus 6-12 karakter, kombinasi alfanumerik.</div>
+                        </div>
+                        <div class="mb-3 password-input-group">
+                            <label for="confirm_password" class="form-label">Konfirmasi Password :</label>
+                            <input type="password" class="form-control" name="confirm_password" id="confirm_password" aria-describedby="confirmpasswordHelp" required autocomplete="off">
+                            <span class="password-toggle" onclick="togglePasswordVisibility('confirm_password')">
+                                <i class="fas fa-eye-slash" id="toggleConfirmPasswordIcon"></i>
+                            </span>
+                            <div id="confirmpasswordHelp" class="form-text">Konfirmasi password yang anda inputkan sebelumnya.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="no_telephone" class="form-label">No Telephone :</label>
+                            <input type="number" class="form-control" name="no_telephone" id="no_telephone" placeholder="contoh : 08262xxxxxxx" required autocomplete="off">
+                        </div>
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Role :</label>
+                            <input type="text" class="form-control" name="role" id="role" value="petugas" readonly>
+                        </div>
+                        <button type="submit" name="submit" class="btn btn-success btn-lg">Simpan</button>
+                        <a href="data_petugas.php" class="btn btn-danger btn-lg">Kembali</a>
+                    </form>
                 </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email :</label>
-                    <input type="email" class="form-control" name="email" id="email" placeholder="contoh : Budiegaming@gamil.kom" required autocomplete="off">
-                </div>
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username :</label>
-                    <input type="text" class="form-control" name="username" id="username" placeholder="contoh : budie" maxlength="12" pattern="[a-z]{1,12}" title="Username hanya boleh huruf kecil dan maksimal 12 karakter" aria-describedby="usernameHelp" required autocomplete="off">
-                    <div id="usernameHelp" class="form-text">Username hanya boleh huruf kecil dan maksimal 12 karakter.</div>
-                </div>
-                <div class="mb-3 password-input-group">
-                    <label for="password" class="form-label">Password :</label>
-                    <input type="password" class="form-control" name="password" id="password" minlength="6" maxlength="12" pattern="^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,12}$" title="Password harus 6-12 karakter, kombinasi huruf dan angka" aria-describedby="passwordHelp" required autocomplete="off">
-                    <span class="password-toggle" onclick="togglePasswordVisibility('password')">
-                        <i class="fas fa-eye-slash" id="togglePasswordIcon"></i>
-                    </span>
-                    <div id="passwordHelp" class="form-text">Password harus 6-12 karakter, kombinasi alfanumerik.</div>
-                </div>
-                <div class="mb-3 password-input-group">
-                    <label for="confirm_password" class="form-label">Konfirmasi Password :</label>
-                    <input type="password" class="form-control" name="confirm_password" id="confirm_password" aria-describedby="confirmpasswordHelp" required autocomplete="off">
-                    <span class="password-toggle" onclick="togglePasswordVisibility('confirm_password')">
-                        <i class="fas fa-eye-slash" id="toggleConfirmPasswordIcon"></i>
-                    </span>
-                    <div id="confirmpasswordHelp" class="form-text">Konfirmasi password yang anda inputkan sebelumnya.</div>
-                </div>
-                <div class="mb-3">
-                    <label for="no_telephone" class="form-label">No Telephone :</label>
-                    <input type="number" class="form-control" name="no_telephone" id="no_telephone" placeholder="contoh : 08262xxxxxxx" required autocomplete="off">
-                </div>
-                <div class="mb-3">
-                    <label for="role" class="form-label">Role :</label>
-                    <input type="text" class="form-control" name="role" id="role" value="petugas" readonly>
-                </div>
-                <button type="submit" name="submit" class="btn btn-success btn-lg">Simpan</button>
-                <a href="data_petugas.php" class="btn btn-danger btn-lg">Kembali</a>
-            </form>
+            </div>
         </div>
-
     </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

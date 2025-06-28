@@ -162,7 +162,6 @@ if (isset($_POST['submit'])) {
 
         <div class="content pt-5 ms-250 px-3">
             <h2 class="mb-4">Edit Data Admin</h2>
-
             <?php
             // --- Tampilkan Alert ---
             if (isset($_SESSION['pesan'])): ?>
@@ -174,65 +173,68 @@ if (isset($_POST['submit'])) {
                 unset($_SESSION['pesan']);
                 unset($_SESSION['tipe']);
             endif; ?>
+            <div class="card shadow-sm border-0 p-3">
+                <div class="card-body">
 
-            <form action="" method="POST">
-                <div class="mb-3">
-                    <label for="nama" class="form-label">Nama :</label>
-                    <input type="text" class="form-control" name="nama" id="nama" value="<?= htmlspecialchars($row['nama']) ?>" required autocomplete="off">
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email :</label>
-                    <input type="email" class="form-control" name="email" id="email" value="<?= htmlspecialchars($row['email']) ?>" required autocomplete="off">
-                </div>
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username :</label>
-                    <input type="text" class="form-control" name="username" id="username" value="<?= htmlspecialchars($row['username']) ?>" readonly autocomplete="off">
-                </div>
-                <div class="mb-3 password-input-group">
-                    <label for="password" class="form-label">Password Baru (kosongkan jika tidak diubah):</label>
-                    <input type="password" class="form-control" name="password" id="password" minlength="6" maxlength="12" pattern="^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,12}$" placeholder="******" title="Password harus 6-12 karakter, kombinasi huruf dan angka" aria-describedby="passwordHelp" autocomplete="off">
-                    <span class="password-toggle" onclick="togglePasswordVisibility('password')">
-                        <i class="fas fa-eye-slash"></i>
-                    </span>
-                    <div id="passwordHelp" class="form-text">Password harus 6-12 karakter, kombinasi alfanumerik.</div>
-                </div>
-                <div class="mb-3 password-input-group">
-                    <label for="confirm_password" class="form-label">Konfirmasi Password Baru :</label>
-                    <input type="password" class="form-control" name="confirm_password" id="confirm_password" aria-describedby="confirmpasswordHelp" autocomplete="off">
-                    <span class="password-toggle" onclick="togglePasswordVisibility('confirm_password')">
-                        <i class="fas fa-eye-slash"></i>
-                    </span>
-                    <div id="confirmpasswordHelp" class="form-text">Konfirmasi password yang anda inputkan sebelumnya.</div>
-                </div>
-                <div class="mb-3">
-                    <label for="no_telephone" class="form-label">No Telephone :</label>
-                    <input type="number" class="form-control" name="no_telephone" id="no_telephone" value="<?= htmlspecialchars($row['no_telephone']) ?>" required autocomplete="off">
-                </div>
-                <div class="mb-3">
-                    <label for="role" class="form-label">Role :</label>
-                    <select class="form-select" name="role" required>
-                        <option value="" disabled>-- Pilih Role --</option>
-                        <option value="superadmin" <?= $row['role'] == 'superadmin' ? 'selected' : '' ?>>Superadmin</option>
-                        <option value="admin" <?= $row['role'] == 'admin' ? 'selected' : '' ?>>Admin</option>
-                    </select>
-                </div>
-                <label class="form-label d-block">Status :</label>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="status" id="statusAktif" value="true" <?= $row['status'] == 1 ? 'checked' : '' ?>>
-                    <label class="form-check-label" for="statusAktif">Aktif</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="status" id="statusNonAktif" value="false" <?= $row['status'] == 0 ? 'checked' : '' ?>>
-                    <label class="form-check-label" for="statusNonAktif">Non Aktif</label>
-                </div>
+                    <form action="" method="POST">
+                        <div class="mb-3">
+                            <label for="nama" class="form-label">Nama :</label>
+                            <input type="text" class="form-control" name="nama" id="nama" value="<?= htmlspecialchars($row['nama']) ?>" required autocomplete="off">
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email :</label>
+                            <input type="email" class="form-control" name="email" id="email" value="<?= htmlspecialchars($row['email']) ?>" required autocomplete="off">
+                        </div>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username :</label>
+                            <input type="text" class="form-control" name="username" id="username" value="<?= htmlspecialchars($row['username']) ?>" readonly autocomplete="off">
+                        </div>
+                        <div class="mb-3 password-input-group">
+                            <label for="password" class="form-label">Password Baru (kosongkan jika tidak diubah):</label>
+                            <input type="password" class="form-control" name="password" id="password" minlength="6" maxlength="12" pattern="^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,12}$" placeholder="******" title="Password harus 6-12 karakter, kombinasi huruf dan angka" aria-describedby="passwordHelp" autocomplete="off">
+                            <span class="password-toggle" onclick="togglePasswordVisibility('password')">
+                                <i class="fas fa-eye-slash"></i>
+                            </span>
+                            <div id="passwordHelp" class="form-text">Password harus 6-12 karakter, kombinasi alfanumerik.</div>
+                        </div>
+                        <div class="mb-3 password-input-group">
+                            <label for="confirm_password" class="form-label">Konfirmasi Password Baru :</label>
+                            <input type="password" class="form-control" name="confirm_password" id="confirm_password" aria-describedby="confirmpasswordHelp" autocomplete="off">
+                            <span class="password-toggle" onclick="togglePasswordVisibility('confirm_password')">
+                                <i class="fas fa-eye-slash"></i>
+                            </span>
+                            <div id="confirmpasswordHelp" class="form-text">Konfirmasi password yang anda inputkan sebelumnya.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="no_telephone" class="form-label">No Telephone :</label>
+                            <input type="number" class="form-control" name="no_telephone" id="no_telephone" value="<?= htmlspecialchars($row['no_telephone']) ?>" required autocomplete="off">
+                        </div>
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Role :</label>
+                            <select class="form-select" name="role" required>
+                                <option value="" disabled>-- Pilih Role --</option>
+                                <option value="superadmin" <?= $row['role'] == 'superadmin' ? 'selected' : '' ?>>Superadmin</option>
+                                <option value="admin" <?= $row['role'] == 'admin' ? 'selected' : '' ?>>Admin</option>
+                            </select>
+                        </div>
+                        <label class="form-label d-block">Status :</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="status" id="statusAktif" value="true" <?= $row['status'] == 1 ? 'checked' : '' ?>>
+                            <label class="form-check-label" for="statusAktif">Aktif</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="status" id="statusNonAktif" value="false" <?= $row['status'] == 0 ? 'checked' : '' ?>>
+                            <label class="form-check-label" for="statusNonAktif">Non Aktif</label>
+                        </div>
 
-                <div class="mt-3">
-                    <button type="submit" name="submit" class="btn btn-success btn-lg">Edit Data</button>
-                    <a href="data_admin.php" class="btn btn-danger btn-lg">Kembali</a>
+                        <div class="mt-3">
+                            <button type="submit" name="submit" class="btn btn-success btn-lg">Edit Data</button>
+                            <a href="data_admin.php" class="btn btn-danger btn-lg">Kembali</a>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
-
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/script2.js"></script>

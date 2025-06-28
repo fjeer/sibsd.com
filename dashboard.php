@@ -8,16 +8,30 @@ $petugas = $koneksi->query("SELECT COUNT(*) AS total FROM tb_admin WHERE role='p
 $jumlah_petugas = $petugas->fetch_assoc()['total'];
 
 // Hitung semua riwayat transaksi
-$transaksi = $koneksi->query("SELECT COUNT(*) AS total FROM tb_setor_sampah");
+$transaksi = $koneksi->query("SELECT COUNT(*) AS total FROM tb_setoran");
 $jumlah_transaksi = $transaksi->fetch_assoc()['total'];
 
 // Grafik setor sampah
 $bulan_labels = [];
 $jumlah_kg = [];
 
-$query = $koneksi->query("SELECT MONTH(tanggal_transaksi) AS bulan, SUM(berat_sampah) AS total_kg FROM tb_setor_sampah GROUP BY MONTH(tanggal_transaksi)");
+$query_grafik = "
+    SELECT 
+        MONTH(ts.tanggal_transaksi) AS bulan, 
+        SUM(tds.berat_kg) AS total_kg 
+    FROM 
+        tb_setoran ts
+    JOIN 
+        tb_detail_setoran tds ON ts.id = tds.id_setoran
+    GROUP BY 
+        MONTH(ts.tanggal_transaksi)
+    ORDER BY
+        bulan ASC;
+";
 
-while ($row = $query->fetch_assoc()) {
+$result_grafik = $koneksi->query($query_grafik);
+
+while ($row = $result_grafik->fetch_assoc()) {
     $bulan_labels[] = date('M', mktime(0, 0, 0, $row['bulan'], 1));
     $jumlah_kg[] = $row['total_kg'];
 }

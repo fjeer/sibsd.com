@@ -98,87 +98,89 @@ if ($result->num_rows > 0) {
             ?>
 
             <h2 class="mb-4">Data Sampah</h2>
+            <div class="card shadow-sm border-0 p-3">
+                <div class="card-body">
+                    <!-- Form Pencarian -->
+                    <form class="d-flex mb-3" method="GET">
+                        <input class="form-control me-2" type="search" name="search" placeholder="Cari sampah..." value="<?= htmlspecialchars($keyword) ?>">
+                        <button class="btn btn-outline-primary" type="submit">Cari</button>
+                    </form>
 
-            <!-- Form Pencarian -->
-            <form class="d-flex mb-3" method="GET">
-                <input class="form-control me-2" type="search" name="search" placeholder="Cari sampah..." value="<?= htmlspecialchars($keyword) ?>">
-                <button class="btn btn-outline-primary" type="submit">Cari</button>
-            </form>
+                    <!-- Tombol Tambah -->
+                    <a href="create.php" class="btn btn-success mb-3">+ Tambah Sampah</a>
 
-            <!-- Tombol Tambah -->
-            <a href="create.php" class="btn btn-success mb-3">+ Tambah Sampah</a>
+                    <table class="table table-striped-columns table-hover">
+                        <thead class="table-info">
+                            <tr>
+                                <th>No</th>
+                                <th>Jenis Sampah</th>
+                                <th>Harga per Kg</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-secondary">
+                            <?php
+                            foreach ($data as $index => $row):
+                            ?>
+                                <tr>
+                                    <td><?= $index + 1 ?></td>
+                                    <td><?= htmlspecialchars($row['jenis_sampah']) ?></td>
+                                    <td><?= htmlspecialchars($row['harga_per_kg']) ?></td>
+                                    <td>
+                                        <?php if ($row['status'] == true): ?>
+                                            <span class="badge bg-success">Aktif</span>
+                                        <?php else: ?>
+                                            <span class="badge bg-secondary">Nonaktif</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <!-- tombol lihat detail -->
+                                        <button
+                                            class="btn btn-info btn-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalDetail<?= $row['id'] ?>">
+                                            Detail
+                                        </button>
+                                        <!-- tombol edit -->
+                                        <a href="update.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
+                                        <!-- tombol hapus -->
+                                        <a href="delete.php?id=<?= $row['id'] ?>" onclick="return confirm('Yakin ingin menghapus data ini?')" class="btn btn-sm btn-danger">Hapus</a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
 
-            <table class="table table-striped-columns table-hover">
-                <thead class="table-info">
-                    <tr>
-                        <th>No</th>
-                        <th>Jenis Sampah</th>
-                        <th>Harga per Kg</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody class="table-secondary">
-                    <?php
-                    foreach ($data as $index => $row):
-                    ?>
-                        <tr>
-                            <td><?= $index + 1 ?></td>
-                            <td><?= htmlspecialchars($row['jenis_sampah']) ?></td>
-                            <td><?= htmlspecialchars($row['harga_per_kg']) ?></td>
-                            <td>
-                                <?php if ($row['status'] == true): ?>
-                                    <span class="badge bg-success">Aktif</span>
-                                <?php else: ?>
-                                    <span class="badge bg-secondary">Nonaktif</span>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <!-- tombol lihat detail -->
-                                <button
-                                    class="btn btn-info btn-sm"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#modalDetail<?= $row['id'] ?>">
-                                    Detail
-                                </button>
-                                <!-- tombol edit -->
-                                <a href="update.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
-                                <!-- tombol hapus -->
-                                <a href="delete.php?id=<?= $row['id'] ?>" onclick="return confirm('Yakin ingin menghapus data ini?')" class="btn btn-sm btn-danger">Hapus</a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-
-            <!-- Modal Detail -->
-            <?php foreach ($data as $row): ?>
-                <div class="modal fade" id="modalDetail<?= $row['id'] ?>" tabindex="-1" aria-labelledby="modalDetailLabel<?= $row['id'] ?>" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-scrollable">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="modalDetailLabel<?= $row['id'] ?>">Detail Nasabah</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <p><strong>Jenis Sampah:</strong> <?= htmlspecialchars($row['jenis_sampah']) ?></p>
-                                <p><strong>Harga per Kg:</strong> <?= htmlspecialchars($row['harga_per_kg']) ?></p>
-                                <p><strong>Deskripsi:</strong> <?= htmlspecialchars($row['deskripsi']) ?></p>
-                                <p><strong>Status:</strong>
-                                    <?= $row['status'] ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-secondary">Nonaktif</span>' ?>
-                                </p>
-                                <p><strong>Tanggal Input:</strong> <?= htmlspecialchars($row['created_at']) ?></p>
-                                <p><strong>Tanggal Update:</strong> <?= htmlspecialchars($row['updated_at']) ?></p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <!-- Modal Detail -->
+                    <?php foreach ($data as $row): ?>
+                        <div class="modal fade" id="modalDetail<?= $row['id'] ?>" tabindex="-1" aria-labelledby="modalDetailLabel<?= $row['id'] ?>" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="modalDetailLabel<?= $row['id'] ?>">Detail Nasabah</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><strong>Jenis Sampah:</strong> <?= htmlspecialchars($row['jenis_sampah']) ?></p>
+                                        <p><strong>Harga per Kg:</strong> <?= htmlspecialchars($row['harga_per_kg']) ?></p>
+                                        <p><strong>Deskripsi:</strong> <?= htmlspecialchars($row['deskripsi']) ?></p>
+                                        <p><strong>Status:</strong>
+                                            <?= $row['status'] ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-secondary">Nonaktif</span>' ?>
+                                        </p>
+                                        <p><strong>Tanggal Input:</strong> <?= htmlspecialchars($row['created_at']) ?></p>
+                                        <p><strong>Tanggal Update:</strong> <?= htmlspecialchars($row['updated_at']) ?></p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
-            <?php endforeach; ?>
+            </div>
         </div>
-    </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

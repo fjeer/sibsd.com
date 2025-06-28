@@ -94,40 +94,41 @@ if (isset($_POST['submit'])) {
         <!-- Content -->
         <div class="content pt-5 ms-250 px-3">
             <h2 class="mb-4">Edit Data Petugas</h2>
+            <div class="card shadow-sm border-0 p-3">
+                <div class="card-body">
+                    <form action="" method="POST">
+                        <div class="mb-3">
+                            <label for="jenis_sampah" class="form-label">Jenis Sampah :</label>
+                            <input type="text" class="form-control" name="jenis_sampah" id="jenis_sampah" value="<?= htmlspecialchars($row['jenis_sampah']) ?>" required>
+                        </div>
+                        <div class=" mb-3">
+                            <label for="harga_per_kg" class="form-label">Harga per Kg :</label>
+                            <input type="number" class="form-control" name="harga_per_kg" id="harga_per_kg" value="<?= htmlspecialchars($row['harga_per_kg']) ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="deskripsi" class="form-label">Deskripsi :</label>
+                            <input type="text" class="form-control" name="deskripsi" id="deskripsi" value="<?= htmlspecialchars($row['deskripsi']) ?>" required>
+                        </div>
+                        <label class="form-label d-block">Status :</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="status" id="statusAktif" value="true"
+                                <?= $row['status'] ? 'checked' : '' ?>>
+                            <label class="form-check-label" for="statusAktif">Aktif</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="status" id="statusNonAktif" value="false"
+                                <?= !$row['status'] ? 'checked' : '' ?>>
+                            <label class="form-check-label" for="statusNonAktif">Non Aktif</label>
+                        </div>
 
-            <form action="" method="POST">
-                <div class="mb-3">
-                    <label for="jenis_sampah" class="form-label">Jenis Sampah :</label>
-                    <input type="text" class="form-control" name="jenis_sampah" id="jenis_sampah" value="<?= htmlspecialchars($row['jenis_sampah']) ?>" required>
+                        <div class="mt-3">
+                            <button type="submit" name="submit" class="btn btn-success btn-lg">Edit Data</button>
+                            <a href="data_sampah.php" class="btn btn-danger btn-lg">Kembali</a>
+                        </div>
+                    </form>
                 </div>
-                <div class=" mb-3">
-                    <label for="harga_per_kg" class="form-label">Harga per Kg :</label>
-                    <input type="number" class="form-control" name="harga_per_kg" id="harga_per_kg" value="<?= htmlspecialchars($row['harga_per_kg']) ?>" required>
-                </div>
-                <div class="mb-3">
-                    <label for="deskripsi" class="form-label">Deskripsi :</label>
-                    <input type="text" class="form-control" name="deskripsi" id="deskripsi" value="<?= htmlspecialchars($row['deskripsi']) ?>" required>
-                </div>
-                <label class="form-label d-block">Status :</label>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="status" id="statusAktif" value="true"
-                        <?= $row['status'] ? 'checked' : '' ?>>
-                    <label class="form-check-label" for="statusAktif">Aktif</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="status" id="statusNonAktif" value="false"
-                        <?= !$row['status'] ? 'checked' : '' ?>>
-                    <label class="form-check-label" for="statusNonAktif">Non Aktif</label>
-                </div>
-
-                <div class="mt-3">
-                    <button type="submit" name="submit" class="btn btn-success btn-lg">Edit Data</button>
-                    <a href="data_sampah.php" class="btn btn-danger btn-lg">Kembali</a>
-                </div>
-            </form>
+            </div>
         </div>
-
-    </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
