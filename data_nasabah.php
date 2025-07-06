@@ -1,5 +1,8 @@
 <?php
 require 'middleware/auth.php';
+require_once 'middleware/role_check.php';
+cekHakAkses(['superadmin', 'admin', 'petugas']); // semua boleh
+
 
 // Proses pencarian
 $where = "";
@@ -38,7 +41,7 @@ if ($result->num_rows > 0) {
             <li class="nav-item mb-2"><a class="nav-link" href="setor_sampah.php">Transaksi Setor Sampah</a></li>
             <li class="nav-item mb-2"><a class="nav-link" href="riwayat_setor.php">Riwayat Transaksi</a></li>
             <li class="nav-item mt-2 mb-1"><span class="text-muted text-uppercase fw-bold small">Laporan</span></li>
-            <li class="nav-item mb-2"><a class="nav-link" href="#">Laporan</a></li>
+            <li class="nav-item mb-2"><a class="nav-link" href="laporan.php">Laporan</a></li>
         </ul>
     </div>
 </div>
