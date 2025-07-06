@@ -1,5 +1,5 @@
 <?php
-require '../koneksi.php';
+require 'config/koneksi.php';
 
 $id = $_GET['id'];
 $sql = "DELETE FROM tb_nasabah WHERE id = '$id'";

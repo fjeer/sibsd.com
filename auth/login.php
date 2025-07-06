@@ -1,9 +1,31 @@
 <?php
-session_start();
+require_once '../config/koneksi.php';
+require '../helpers/cookies.php';
 
-if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
-    header("Location: ../index.php");
-    exit();
+// Auto-login via remember_me cookie
+if (!isset($_SESSION['loggedin']) && isset($_COOKIE['remember_me'])) {
+    $userId = verifyRememberMe($koneksi);
+    if ($userId) {
+        // Ambil data user
+        $stmt = $koneksi->prepare("SELECT * FROM tb_admin WHERE id = ?");
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+        $stmt->close();
+
+        if ($user && $user['status'] == 1) {
+            $_SESSION['loggedin'] = true;
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['nama_lengkap'] = $user['nama'];
+            $_SESSION['role'] = $user['role'];
+            $_SESSION['status'] = $user['status'];
+
+            header("Location: ../index.php");
+            exit();
+        }
+    }
 }
 
 $alert_message = '';

@@ -4,7 +4,7 @@ $(document).ready(function () {
 
 	// Fungsi untuk menambahkan baris item baru
 	$("#add_item_btn").click(function () {
-		const sampahOptions = $("#jenis_sampah_0").html();
+		const sampahOptions = $("select[name='id_sampah[]']").first().html();
 
 		const item_template = `
             <div class="row item-row mb-3 align-items-end">

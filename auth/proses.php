@@ -1,5 +1,6 @@
 <?php
-require '../koneksi.php';
+require '../config/koneksi.php';
+require '../helpers/cookies.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = $_POST['user'] ?? '';
@@ -40,10 +41,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 exit();
             }
 
-            if($remember_me){
-                setcookie('user', $user,time()+(86400*30),"/");
-                setcookie('nama', $admin_data['nama'], time() + (86400 * 30), "/");
+            if ($remember_me) {
+                storeRememberMeToken($koneksi, $admin_data['id']);
             }
+            
             // LOGIN BERHASIL
             $_SESSION['loggedin'] = true;
             $_SESSION['user_id'] = $admin_data['id'];
