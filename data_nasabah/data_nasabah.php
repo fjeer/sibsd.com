@@ -84,7 +84,6 @@ if ($result->num_rows > 0) {
         <div class="content pt-5 ms-250 px-3">
             <!-- Alert Pesan -->
             <?php
-            session_start();
             if (isset($_SESSION['pesan'])):
             ?>
                 <div class="alert alert-<?= $_SESSION['tipe'] ?> alert-dismissible fade show mb-3" role="alert">

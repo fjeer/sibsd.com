@@ -1,5 +1,4 @@
 <?php
-session_start();
 require '../koneksi.php';
 
 // Generate Nomor Induk Nasabah

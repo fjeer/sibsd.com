@@ -1,13 +1,19 @@
 <?php
-session_start();
 require_once 'koneksi.php';
 require 'dashboard.php';
-// require_once 'cookies.php';
 
-if (!isset($_SESSION['loggedin'])) {
+if (!isset($_SESSION['loggedin']) && isset($_COOKIE['user'])) {
+    $_SESSION['loggedin'] = true;
+    $_SESSION['username'] = $_COOKIE['user'];
+    $_SESSION['nama_lengkap'] = $_COOKIE['nama'];
+}elseif (!isset($_SESSION['loggedin']) && !isset($_COOKIE['user'])) {
     header("Location: login/login.php");
     exit();
 }
+
+print_r($_SESSION);
+print_r($_COOKIE);
+
 ?>
 
 <!DOCTYPE html>
